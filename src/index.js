@@ -21,12 +21,17 @@ const html = todos => `<!DOCTYPE html>
 
   <header class="bg-white" style="background-color:rgb(249 115 22);">
   <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-    <div class="flex lg:flex-1">
-      <a href="#" class="-m-1.5 p-1.5">
-        <span class="sr-only">Your Company</span>
+    <div class="flex lg:flex-1 items-center justify-between w-full">
+      <a href="#" class="-m-1.5 p-1.5 hidden lg:block">
+        <span class="sr-only">RIT LOGO</span>
         <img class="h-8 w-auto" src="https://www.rit.edu/brandportal/sites/rit.edu.brandportal/files/2020-04/new_RIT_logo1_w.png" alt="">
       </a>
-      <span class="self-center ml-5 text-xl font-semibold whitespace-nowrap dark:text-white">Food Finder</span>
+      <div>
+        <img class="h-16 w-auto" src="https://i.imgur.com/46U1Z7J.png" alt="">
+      </div>
+      <div class="">
+        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Log in <span aria-hidden="true">&rarr;</span></a>
+      </div>
     </div>
     </nav>
     </header>
