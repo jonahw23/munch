@@ -1,0 +1,11 @@
+name = "munch"
+main = "src/index.js"
+compatibility_date = "2023-11-16"
+env = { }
+
+[triggers]
+crons = [ ]
+
+[[kv_namespaces]]
+id = "4532439fcfb44ed7b4d8da03a308d6f3"
+binding = "EXAMPLE_DATA"
