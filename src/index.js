@@ -7,7 +7,6 @@ const html = todos => `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Munch</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
-    <link href="/main.css" rel="stylesheet">
 
   </head>
 
