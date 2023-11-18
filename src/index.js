@@ -6,6 +6,7 @@ const html = todos => `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Munch</title>
+    <link rel="icon" type="image/x-icon" href="https://i.imgur.com/V3vGZfC.png">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
 
     <style>
@@ -20,18 +21,18 @@ const html = todos => `<!DOCTYPE html>
   </head>
 
   <header class="bg-white" style="background-color:rgb(249 115 22);">
-  <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
     <div class="flex lg:flex-1 items-center justify-between w-full">
-      <a href="#" class="-m-1.5 p-1.5 hidden lg:block">
+      <a href="#" class="-m-1.5 mt:0 p-1.5 hidden lg:block">
         <span class="sr-only">RIT LOGO</span>
         <img class="h-8 w-auto" src="https://www.rit.edu/brandportal/sites/rit.edu.brandportal/files/2020-04/new_RIT_logo1_w.png" alt="">
       </a>
       <div>
         <img class="h-16 w-auto" src="https://i.imgur.com/46U1Z7J.png" alt="">
       </div>
-      <div class="">
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Log in <span aria-hidden="true">&rarr;</span></a>
-      </div>
+      <button type="button" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <a href="#" class="text-sm font-bold leading-6 text-gray-900">Log in</a>
+      </button>
     </div>
     </nav>
     </header>
@@ -52,15 +53,35 @@ const html = todos => `<!DOCTYPE html>
               <option value="Fundraiser">Fundraiser</option>
             </select>
 
-            <select id="eventLocation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <select id="eventLocation" onchange="checkNotListed()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
               <option selected>Location</option>
             </select>
+
+            <div class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Location Details</div>  
+            <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex flex-wrap">
+                <input id="locationInput" placeholder=" Location" class="hidden bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+                <input id="roomNumInput" placeholder=" Room Number" type="number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+              </div>
+              <div class="flex items-center mb-4">
+                  <input id="outsideLocation" onchange="checkOutside()" type="checkbox" value="" class="w-4 h-4 ml-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                  <label for="outsideLocation" class="ms-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Located outside</label>
+                </div>
+            </div>
+            
+            <div id="eventDetails" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Event Details</div>
+              <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex flex-wrap">
+                <input id="hourInput" placeholder=" Approx Hours Left" type="number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+                <input id="minInput" placeholder=" Approx Minutes Left" type="number" class="hidden bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+              </div>
+            </div>
 
             <div id="foodType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
               
             </div>
           
-          <button class="createbutton text-white font-bold mt-5 py-2 px-4 rounded focus:outline-none focus:shadow-outline" id="create" type="submit">Create</button>
+          <button class="createbutton text-white font-bold mt-5 py-2 px-4 rounded focus:outline-none focus:shadow-outline" id="create" type="submit">Submit</button>
         </div>
 
       </div>
@@ -74,6 +95,7 @@ const html = todos => `<!DOCTYPE html>
 
   <script>
   const buildings = [
+    "Not Listed",
     "905 Annex V",
     "906 Annex VI",
     "907 Annex VII",
@@ -121,6 +143,7 @@ const html = todos => `<!DOCTYPE html>
     "GOL Golisano Hall",
     "GOR Gordon Field House & Activities Center",
     "GOS Thomas Gosnell Hall",
+    "Greek Lawn",
     "GVC Global Village Way C",
     "GVD Global Village Way D",
     "GVE Global Village Way E",
@@ -129,6 +152,7 @@ const html = todos => `<!DOCTYPE html>
     "HAC Hale-Andrews Student Life Center",
     "HLC Hugh L. Carey Hall",
     "ICC RIT Inn & Conference Center",
+    "Infinity Quad",
     "INS Institute Hall",
     "JEF 175 Jefferson Road",
     "KGH Kate Gleason Hall",
@@ -194,9 +218,26 @@ const html = todos => `<!DOCTYPE html>
       updateTodos()
     }
 
+    const accordianBaseText = " accordionText flex items-left "
+
+    var showInside = function(evt) {
+      var outer = evt.currentTarget
+      var target = outer.dataset.count
+      var inners = document.getElementsByClassName("accordionText")
+
+      for(i = 0; i < inners.length; i++){
+          if(inners[i].id == target){
+            inners[i].setAttribute("class", accordianBaseText)
+          }
+          else{
+            inners[i].setAttribute("class", "hidden" + accordianBaseText)
+          }
+      }
+    }
+
     var fillBuildings = function(){
       var buildingContainer = document.querySelector("#eventLocation")
-      console.log(buildingContainer)
+      //console.log(buildingContainer)
       buildingContainer.innerHTML = null
       var buildingBox = document.createElement("option")
       buildingBox.innerText = "Location"
@@ -205,10 +246,38 @@ const html = todos => `<!DOCTYPE html>
       buildingContainer.appendChild(buildingBox)
       for(i = 0; i < buildings.length; i++){
         var buildingAdd = document.createElement("option")
-        console.log(buildings[i])
+        //console.log(buildings[i])
         buildingAdd.innerText = buildings[i]
-        buildingBox.setValue = buildings[i]
+        buildingAdd.setValue = buildings[i]
         buildingContainer.appendChild(buildingAdd)
+      }
+    }
+
+    var checkNotListed = function(){
+      var buildingContainer = document.querySelector("#eventLocation")
+      if(buildingContainer.value == "Not Listed"){
+        //console.log("Other clicked")
+        var locationInput = document.querySelector("#locationInput")
+        locationInput.classList.remove("hidden")
+        
+      }
+      else{
+        var locationInput = document.querySelector("#locationInput")
+        locationInput.classList.add("hidden")
+      }
+    }
+
+    var checkOutside = function(){
+      var checkedBox = document.querySelector("#outsideLocation")
+      if(checkedBox.checked){
+        //console.log("Other clicked")
+        var locationInput = document.querySelector("#roomNumInput")
+        locationInput.classList.add("hidden")
+        
+      }
+      else{
+        var locationInput = document.querySelector("#roomNumInput")
+        locationInput.classList.remove("hidden")
       }
     }
 
@@ -249,6 +318,32 @@ const html = todos => `<!DOCTYPE html>
 
         foodContainer.appendChild(foodWrap)
       }
+
+      var otherBox = document.createElement("input")
+      var other = document.createElement("input")
+      var otherWrap = document.createElement("div")
+      otherWrap.setAttribute("Class", "flex items-center mb-4")
+
+      //console.log(foods[i])
+
+      otherBox.setAttribute("type", "checkbox")
+      otherBox.setAttribute("id", "default-checkbox")
+      otherBox.setAttribute("Value", "otherCheckBox")
+      otherBox.setAttribute("Class", "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600")
+
+      other.setAttribute("type", "text")
+      other.setAttribute("For", otherBox)
+      other.setAttribute("Class", "bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+      other.setAttribute("placeholder", "Other")
+      other.setAttribute("id", "otherTextBox")
+      //console.log(other)
+
+      //console.log(otherBox)
+
+      otherWrap.appendChild(otherBox)
+      otherWrap.appendChild(other)
+
+      foodContainer.appendChild(otherWrap)
     }
 
     var populateTodos = function() {
@@ -258,13 +353,20 @@ const html = todos => `<!DOCTYPE html>
       count = 0;
 
       window.todos.forEach(todo => {
-        var el = document.createElement("div")
+        var el = document.createElement("button")
         el.className = "border-t py-4"
-        el.className += "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex items-center justify-between"
+        el.className += "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex-wrap items-left justify-between"
         el.dataset.todo = todo.id
+        el.dataset.count = count
+        el.addEventListener('click', showInside)
+        var upper = document.createElement("div")
+        upper.setAttribute("class",  "flex lg:flex-1 items-center justify-between w-full")
+        el.appendChild(upper)
 
-        var name = document.createElement("span")
+        var name = document.createElement("div")
         name.className = todo.completed ? "line-through" : ""
+        name.setAttribute("style",  "font-weight: 600;")
+        name.id = "name " + count 
         name.innerText = todo.name
 
         var xout = document.createElement("button")
@@ -295,7 +397,7 @@ const html = todos => `<!DOCTYPE html>
 
         xout.appendChild(ximg)
 
-        console.log(xout)
+        //console.log(xout)
 
 
         var checkbox = document.createElement("input")
@@ -304,9 +406,32 @@ const html = todos => `<!DOCTYPE html>
         checkbox.checked = todo.completed ? 1 : 0
         checkbox.addEventListener('click', completeTodo)
 
+        var inside = document.createElement("div")
+        inside.className = "hidden" + accordianBaseText
+        inside.setAttribute("id", count)
+        var text = document.createElement("paragraph")
+        var foodOptions = todo.foods
+        if(foodOptions == null){
+          foodOptions = []
+        }
+        var description = foodOptions.length > 0 ? "" : "No food type specified"
+        if(foodOptions.length > 0){
+          var italic = document.createElement("paragraph")
+          italic.innerText = "Food types:"
+          text.appendChild(italic)
+          for(i = 0; i < foodOptions.length; i++){
+            description += \` 
+            \` + "• " + foodOptions[i]
+          } // This is how I have to do nextLine / newLine
+        }
+        text.innerText += description
+        text.setAttribute("class", "border-t-2 border-blue-900 w-full text-left")
+        inside.appendChild(text)
+
         //el.appendChild(checkbox)
-        el.appendChild(name)
-        el.appendChild(xout)
+        upper.appendChild(name)
+        upper.appendChild(xout)
+        el.appendChild(inside)
         todoContainer.appendChild(el)
         count ++
       })
@@ -326,27 +451,46 @@ const html = todos => `<!DOCTYPE html>
           returns.push(foods[i])
         }
       }
+      var otherBox = document.querySelector("input[id=otherTextBox]")
+      var otherCheck = document.querySelector("input[value=otherCheckBox]") 
+      if(otherBox.value != null && otherCheck.checked){
+        returns.push(otherBox.value)
+        otherBox.value = null
+        otherCheck.checked = false
+      }
       return returns
     }
 
     var createTodo = function() {
+      //submit
+      
       var foodOptions = getChecked()
       var event = document.querySelector("select[id=eventType]") // This name is the name of the element -->
       var location = document.querySelector("select[id=eventLocation]") // This name is the name of the element -->
-      if (location.value !== "Location" && location.value !== null && event.value !== "Event Type" && event.value !== null) {
-        console.log(event.value)
-        console.log(location.value)
-        var description = event.value + " at " + location.value
-        if(foodOptions.length > 0){
-          description += " (Foods:"
-          for(i = 0; i < foodOptions.length; i++){
-            description += " " + foodOptions[i]
-          }
-          description += ")"
+      var input = document.querySelector("#locationInput")
+      var locationVal = location.value
+      if(locationVal === "Not Listed"){
+        if(input.value !== null && input.value !== ""){
+          locationVal = input.value
+          input.value = ""
         }
-        window.todos = [].concat(todos, { id: window.todos.length + 1, name: description, completed: false })
+        else{
+          locationVal = null
+        }
+      }
+      var roomNum = document.querySelector("#roomNumInput")
+      var isOutside = document.querySelector("#outsideLocation")
+      console.log(isOutside)
+      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null) {
+        console.log(event.value)
+        console.log(locationVal)
+        var description = event.value + " at " + locationVal
+        window.todos = [].concat(todos, { id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, completed: false })
         event.value = "Event Type"
         location.value = "Location"
+        roomNum.value = ""
+        isOutside.checked = false
+        checkOutside()
         updateTodos()
       }
     }
