@@ -18,9 +18,58 @@ const html = todos => `<!DOCTYPE html>
     }
     </style>
 
+    <script src="https://www.gstatic.com/firebasejs/9.0.0-beta.5/firebase-app-compat.js"></script>
+   
+    <script src="https://www.gstatic.com/firebasejs/9.0.0-beta.5/firebase-analytics-compat.js"></script>
+  
+    <script src="https://www.gstatic.com/firebasejs/9.0.0-beta.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0-beta.5/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0-beta.5/firebase-storage-compat.js"></script>
+
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+      import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
+
+      const firebaseApp = initializeApp({
+          apiKey: FIREBASE_KEY,
+          authDomain: "munch-f0a4d.firebaseapp.com",
+          projectId: "munch-f0a4d",
+          storageBucket: "munch-f0a4d.appspot.com",
+          messagingSenderId: "765807621903",
+          appId: "1:765807621903:web:db47c5f683867b3e5c307a",
+          measurementId: "G-D8H5Y971ZC"
+        });
+      
+        const auth = getAuth(firebaseApp);
+      
+        onAuthStateChanged(auth, user => {
+          if (user) {
+            console.log('Logged in as ' + user.email );
+          } else {
+            console.log('No user');
+          }
+        });
+
+        createUserWithEmailAndPassword(auth, "jwittespare@gmail.com", "newPassword")
+        .then((userCredential) => {
+          // Signed up 
+          const user = userCredential.user;
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorMessage)
+          // ..
+        });
+    </script>
+
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css" />
+
   </head>
 
   <header class="bg-white" style="background-color:rgb(249 115 22);">
+  
   <nav class="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
     <div class="flex lg:flex-1 items-center justify-between w-full">
       <a href="#" class="-m-1.5 mt:0 p-1.5 hidden lg:block">
@@ -61,7 +110,7 @@ const html = todos => `<!DOCTYPE html>
             <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Location Details</div>  
             <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex flex-wrap">
                 <input id="locationInput" placeholder=" Location" class="hidden bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
-                <input id="roomNumInput" placeholder=" Room Number" type="number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+                <input id="roomNumInput" placeholder=" Room Number" type="number" min="0" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
               </div>
               <div class="flex items-center mb-4">
                   <input id="outsideLocation" onchange="checkOutside()" type="checkbox" value="" class="w-4 h-4 ml-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -72,8 +121,8 @@ const html = todos => `<!DOCTYPE html>
             <div id="eventDetails" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
               <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Event Details</div>
               <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex flex-wrap">
-                <input id="hourInput" placeholder=" Approx Hours Left" type="number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
-                <input id="minInput" placeholder=" Approx Minutes Left" type="number" class="hidden bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+                <input id="hourInput" placeholder=" Approx Hours Left" type="number" min="0" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+                <input id="minInput" placeholder=" Approx Minutes Left" type="number" min="0" class="hidden bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
               </div>
             </div>
 
@@ -202,6 +251,7 @@ const html = todos => `<!DOCTYPE html>
     const foods = ["Candy", "Snacks", "Pizza", "Desserts"]
 
     window.todos = ${todos || []}
+    const FIREBASE_KEY = ${FIREBASE_KEY}
 
     var updateTodos = function() {
       fetch("/", { method: 'PUT', body: JSON.stringify({ todos: window.todos }) })
@@ -424,11 +474,19 @@ const html = todos => `<!DOCTYPE html>
         const d = new Date();
         var time = d.getTime();
 
-        console.log(todo.hours)
+        // console.log("Todo Hours:" + todo.hours + " " + todo.location)
 
         var timeLeft = todo.hours - time
 
-        console.log(timeLeft)
+        if(timeLeft < 60000){
+          //console.log("Cutting")
+          window.todos.splice(count, 1)
+          updateTodos()
+          populateTodos()
+          return // to make sure it doesn't finish rendering the finished one
+        }
+
+        console.log("Time left", timeLeft + " " + todo.location)
         var hoursLeft = Math.floor(timeLeft / 3600000)
         timeLeft -= hoursLeft * 3600 * 1000
         var minsLeft = Math.floor(timeLeft / 60000)
@@ -520,6 +578,7 @@ const html = todos => `<!DOCTYPE html>
         event.value = "Event Type"
         location.value = "Location"
         roomNum.value = ""
+        hours.value = ""
         isOutside.checked = false
         checkOutside()
         updateTodos()
@@ -534,6 +593,7 @@ const defaultData = { todos: [] }
 
 const setCache = (key, data) => EXAMPLE_DATA.put(key, data)
 const getCache = key => EXAMPLE_DATA.get(key)
+const FIREBASE_KEY = FIREBASE_API_KEY
 
 async function getTodos(request) {
   const ip = request.headers.get('CF-Connecting-IP')
