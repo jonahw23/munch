@@ -1,105 +1,37 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Munch</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
-
-  </head>
-
-  <body class="bg-blue-100">
-    <div class="w-full h-full flex content-center justify-center mt-8">
-      <div class="bg-white shadow-md rounded px-8 pt-6 py-8 mb-4">
-        <h1 class="block text-grey-800 text-md font-bold mb-2">Submit Event</h1>
-        <div class="flex" style="flex-direction:column">
-          <input class="shadow appearance-none border rounded w-full mt-2 py-2 px-3 text-grey-800 leading-tight focus:outline-none focus:shadow-outline" type="text" name="testing" placeholder="A new todo"></input>
-          <input class="shadow appearance-none border rounded w-full mt-2 py-2 px-3 text-grey-800 leading-tight focus:outline-none focus:shadow-outline" type="text" name="second" placeholder="A new todo"></input>
-          
-            <select id="eventType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Event Type</option>
-              <option value="Free Food!">Free food!</option>
-              <option value="Party with food">Party with food</option>
-              <option value="Bake sale">Bake sale</option>
-              <option value="Fundraiser">Fundraiser</option>
-            </select>
-
-            <select id="eventLocation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Location</option>
-              <option value="Free Food!">Free food!</option>
-              <option value="Party with food">Party with food</option>
-              <option value="Bake sale">Bake sale</option>
-              <option value="Fundraiser">Fundraiser</option>
-            </select>
-          
-          <button class="bg-blue-500 hover:bg-blue-800 text-white font-bold mt-5 py-2 px-4 rounded focus:outline-none focus:shadow-outline" id="create" type="submit">Create</button>
-        </div>
-        <div class="mt-4" id="todos"></div>
-      </div>
-    </div>
-  </body>
-
-  <script>
-    //window.todos = ${todos || []};
-
-    var updateTodos = function() {
-      fetch("/", { method: 'PUT', body: JSON.stringify({ todos: window.todos }) })
-      populateTodos()
-    }
-
-    var completeTodo = function(evt) {
-      var checkbox = evt.target
-      var todoElement = checkbox.parentNode
-      var newTodoSet = [].concat(window.todos)
-      var todo = newTodoSet.find(t => t.id == todoElement.dataset.todo)
-      todo.completed = !todo.completed
-      window.todos = newTodoSet
-      updateTodos()
-    }
-
-    var populateTodos = function() {
-      var todoContainer = document.querySelector("#todos")
-      todoContainer.innerHTML = null
-
-      window.todos.forEach(todo => {
-        var el = document.createElement("div")
-        el.className = "border-t py-4"
-        el.dataset.todo = todo.id
-
-        var name = document.createElement("span")
-        name.className = todo.completed ? "line-through" : ""
-        name.innerText = todo.name
-
-        var checkbox = document.createElement("input")
-        checkbox.className = "mx-4"
-        checkbox.type = "checkbox"
-        checkbox.checked = todo.completed ? 1 : 0
-        checkbox.addEventListener('click', completeTodo)
-
-        el.appendChild(checkbox)
-        el.appendChild(name)
-        todoContainer.appendChild(el)
-      })
-    }
-
-    populateTodos()
-
-    var createTodo = function() {
-      var select = document.querySelector("select[id=eventType]") // This name is the name of the element -->
-      if (select.value !== "Event Type" && select.value !== null) {
-        //console.log(select.value)
-        window.todos = [].concat(todos, { id: window.todos.length + 1, name: select.value, completed: false })
-        select.value = ""
-        updateTodos()
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+  import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
+  
+  const firebaseApp = initializeApp({
+      apiKey: secrets.env.FIREBASE_API_KEY,
+      authDomain: "munch-f0a4d.firebaseapp.com",
+      projectId: "munch-f0a4d",
+      storageBucket: "munch-f0a4d.appspot.com",
+      messagingSenderId: "765807621903",
+      appId: "1:765807621903:web:db47c5f683867b3e5c307a",
+      measurementId: "G-D8H5Y971ZC"
+    });
+  
+    const auth = getAuth(firebaseApp);
+  
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        console.log('Logged in as ' + user.email );
+      } else {
+        console.log('No user');
       }
-      var input = document.querySelector("input[name=testing]") // This name is the name of the element
-      if (input.value.length > 0) {
-        window.todos = [].concat(todos, { id: window.todos.length + 1, name: input.value, completed: false })
-        input.value = ""
-        updateTodos()
-      }
-    }
+    });
 
-    document.querySelector("#create").addEventListener('click', createTodo)
-  </script>
-</html>
+    createUserWithEmailAndPassword(auth, "jonahwitte10@gmail.com", "newPassword")
+    .then((userCredential) => {
+      // Signed up 
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorMessage)
+      // ..
+    });
+</script>
