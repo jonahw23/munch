@@ -353,6 +353,7 @@ const html = todos => `<!DOCTYPE html>
       count = 0;
 
       window.todos.forEach(todo => {
+        // display
         var el = document.createElement("button")
         el.className = "border-t py-4"
         el.className += "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex-wrap items-left justify-between"
@@ -411,19 +412,38 @@ const html = todos => `<!DOCTYPE html>
         inside.setAttribute("id", count)
         var text = document.createElement("paragraph")
         var foodOptions = todo.foods
+        var newLine = \`
+        \`
         if(foodOptions == null){
           foodOptions = []
         }
-        var description = foodOptions.length > 0 ? "" : "No food type specified"
+
+        text.innerText += "Location: " 
+        text.innerText += todo.outside ? todo.location + " (Outside)": todo.location + ", Room " + todo.room
+
+        const d = new Date();
+        var time = d.getTime();
+
+        console.log(todo.hours)
+
+        var timeLeft = todo.hours - time
+
+        console.log(timeLeft)
+        var hoursLeft = Math.floor(timeLeft / 3600000)
+        timeLeft -= hoursLeft * 3600 * 1000
+        var minsLeft = Math.floor(timeLeft / 60000)
+        var timeContent = "Time left: " + (hoursLeft > 0 ? hoursLeft + " hours and " : "") + minsLeft + " minutes"
+
+        text.innerHTML += newLine + timeContent
+
+        var description = foodOptions.length > 0 ? "" : newLine + "No food type specified"
         if(foodOptions.length > 0){
-          var italic = document.createElement("paragraph")
-          italic.innerText = "Food types:"
-          text.appendChild(italic)
+          description += newLine + "Food types:"
           for(i = 0; i < foodOptions.length; i++){
-            description += \` 
-            \` + "• " + foodOptions[i]
+            description += newLine + "• " + foodOptions[i]
           } // This is how I have to do nextLine / newLine
         }
+
         text.innerText += description
         text.setAttribute("class", "border-t-2 border-blue-900 w-full text-left")
         inside.appendChild(text)
@@ -480,12 +500,23 @@ const html = todos => `<!DOCTYPE html>
       }
       var roomNum = document.querySelector("#roomNumInput")
       var isOutside = document.querySelector("#outsideLocation")
+      var hours = document.querySelector("#hourInput")
+
+      var hourContent = hours.value !== null && hours.value !== "" ? hours.value : 1
+
+      const d = new Date();
+      let time = d.getTime();
+
+      var timeUp = hourContent * 3600 * 1000
+
+      timeUp += time
+
       console.log(isOutside)
       if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null) {
         console.log(event.value)
         console.log(locationVal)
         var description = event.value + " at " + locationVal
-        window.todos = [].concat(todos, { id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, completed: false })
+        window.todos = [].concat(todos, { id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, hours: timeUp, completed: false })
         event.value = "Event Type"
         location.value = "Location"
         roomNum.value = ""
