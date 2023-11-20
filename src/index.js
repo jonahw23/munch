@@ -27,7 +27,6 @@ const html = todos => `<!DOCTYPE html>
     <script src="https://www.gstatic.com/firebasejs/9.0.0-beta.5/firebase-storage-compat.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
-    <script src="bower_components/firebaseui/dist/firebaseui.js"></script>
 
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
@@ -62,23 +61,31 @@ const html = todos => `<!DOCTYPE html>
           tosUrl: './#tos',
           // Privacy policy url.
           privacyPolicyUrl: './#privacy',
+          'signInFlow': 'popup',
         };
 
         // The start method will wait until the DOM is loaded.
-        ui.start('#firebaseuiAuthContainer', uiConfig);
+
+        //signInWithEmailAndPassword(auth, "jthirdextra@gmail.com", "Password123")
       
         onAuthStateChanged(auth, user => {
           var login = document.querySelector("#firebaseuiAuthContainer")
           var loginButton = document.querySelector("#loginButton")
           var avatar = document.querySelector("#avatar")
-          var username = document.querySelector("#username")
-          var useremail = document.querySelector("#email")
-          var signoutbutton = document.querySelector("#signOutButton")
 
           if (user) {
+            var username = document.querySelector("#username")
+            var useremail = document.querySelector("#email")
+            var signoutbutton = document.querySelector("#signOutButton")
+            var avatarImg = document.querySelector("#avatarImg")
+
             loginButton.classList.add("hidden")
             avatar.classList.remove("hidden")
             useremail.innerText = user.email
+
+            if(user.photoURL){
+              avatarImg.src = user.photoURL
+            }
 
             signoutbutton.onclick = function(){
               signOut(auth)
@@ -88,10 +95,13 @@ const html = todos => `<!DOCTYPE html>
             console.log(user)
             
           } else {
+            ui.start('#firebaseuiAuthContainer', uiConfig);
             loginButton.classList.remove("hidden")
             avatar.classList.add("hidden")
             console.log('No user');
           }
+        }, error => {
+          console.log("error")
         });
     </script>
 
@@ -100,7 +110,7 @@ const html = todos => `<!DOCTYPE html>
   </head>
 
   <!-- Login modal -->
-  <div id="loginModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] bg-black bg-opacity-50 max-h-full">
+  <div id="loginModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-black bg-opacity-50 max-h-full">
       <div class="relative p-4 w-full max-w-2xl max-h-full">
           <!-- Modal content -->
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -139,8 +149,8 @@ const html = todos => `<!DOCTYPE html>
       <div>
         <img class="h-16 w-auto" src="https://i.imgur.com/46U1Z7J.png" alt="">
       </div>
-      <div id="avatar">
-        <img class="w-10 h-10 rounded-full" onClick="toggleUserDropdown()" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Rounded avatar">
+      <div id="avatar" class="hidden">
+        <img id="avatarImg" class="w-10 h-10 rounded-full" onClick="toggleUserDropdown()" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Rounded avatar">
         <div id="userDropdown" class="hidden absolute right-0 mt-3 mr-3 w-auto overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-gray-900/5">
             <div class="px-4 py-1 mt-1 text-sm text-gray-900 dark:text-white">
               <div id="username">User logged in</div>
@@ -153,7 +163,7 @@ const html = todos => `<!DOCTYPE html>
             </div>
         </div>
       </div>
-      <button type="button" id="loginButton" onclick="toggleLoginModal()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <button type="button" id="loginButton" onclick="toggleLoginModal(); return false;" class="hidden bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
         <a href="#" class="text-sm font-bold leading-6 text-gray-900">Log in</a>
       </button>
     </div>
@@ -510,10 +520,67 @@ const html = todos => `<!DOCTYPE html>
 
         var name = document.createElement("div")
         name.className = todo.completed ? "line-through" : ""
+        name.classList.add("text-left")
         name.setAttribute("style",  "font-weight: 600;")
         name.id = "name " + count 
-        name.innerText = todo.name
+        name.innerText = todo.upvotes + " " + todo.name
 
+        var upV = document.createElement("button")
+        upV.type = "button"
+        upV.onclick = function () {
+          todo.upvotes += 1
+          //console.log(todo.upvotes)
+          updateTodos()
+        }
+        upV.className = "bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+
+        var upImg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        upImg.setAttribute("class", "h-2 w-2")
+        upImg.setAttribute("fill",  "none")
+        upImg.setAttribute("viewBox",  "0 0 24 24")
+        upImg.setAttribute("stroke",  "currentColor")
+
+        var strokeUp = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'path'
+        );
+        strokeUp.setAttribute("stroke-linecap", "round")
+        strokeUp.setAttribute("stroke-linejoin", "round")
+        strokeUp.setAttribute("stroke-width",  "2")
+        strokeUp.setAttribute("d", "M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75")
+
+        upImg.appendChild(strokeUp)
+
+        upV.appendChild(upImg)
+
+        var downV = document.createElement("button")
+        downV.type = "button"
+        downV.onclick = function () {
+          todo.upvotes -= 1
+          updateTodos()
+        }
+        downV.className = "bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+
+        var downImg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        downImg.setAttribute("class", "h-2 w-2")
+        downImg.setAttribute("fill",  "none")
+        downImg.setAttribute("viewBox",  "0 0 24 24")
+        downImg.setAttribute("stroke",  "currentColor")
+
+        var strokeDown = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'path'
+        );
+        strokeDown.setAttribute("stroke-linecap", "round")
+        strokeDown.setAttribute("stroke-linejoin", "round")
+        strokeDown.setAttribute("stroke-width",  "2")
+        strokeDown.setAttribute("d", "M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75")
+
+        downImg.appendChild(strokeDown)
+
+        downV.appendChild(downImg)
+
+        
         var xout = document.createElement("button")
         xout.type = "button"
         xout.value = count
@@ -521,7 +588,7 @@ const html = todos => `<!DOCTYPE html>
           window.todos.splice(xout.value, 1) // remove the element
           updateTodos()
         }
-        xout.className = "bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+        xout.className = "hidden bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
 
         var ximg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         ximg.setAttribute("class", "h-2 w-2")
@@ -580,7 +647,7 @@ const html = todos => `<!DOCTYPE html>
           return // to make sure it doesn't finish rendering the finished one
         }
 
-        console.log("Time left", timeLeft + " " + todo.location)
+        //console.log("Time left", timeLeft + " " + todo.location)
         var hoursLeft = Math.floor(timeLeft / 3600000)
         timeLeft -= hoursLeft * 3600 * 1000
         var minsLeft = Math.floor(timeLeft / 60000)
@@ -600,9 +667,14 @@ const html = todos => `<!DOCTYPE html>
         text.setAttribute("class", "border-t-2 border-blue-900 w-full text-left")
         inside.appendChild(text)
 
+        var votes = document.createElement("div")
+        votes.appendChild(upV)
+        votes.appendChild(downV)
+
         //el.appendChild(checkbox)
         upper.appendChild(name)
         upper.appendChild(xout)
+        upper.appendChild(votes)
         el.appendChild(inside)
         todoContainer.appendChild(el)
         count ++
@@ -663,12 +735,12 @@ const html = todos => `<!DOCTYPE html>
 
       timeUp += time
 
-      console.log(isOutside)
+      //console.log(isOutside)
       if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null) {
         console.log(event.value)
         console.log(locationVal)
         var description = event.value + " at " + locationVal
-        window.todos = [].concat(todos, { id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, hours: timeUp, completed: false })
+        window.todos = [].concat(todos, { id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, hours: timeUp, upvotes: 1, completed: false })
         event.value = "Event Type"
         location.value = "Location"
         roomNum.value = ""
@@ -731,5 +803,6 @@ async function handleRequest(request) {
 }
 
 addEventListener('fetch', event => {
+  console.log("Url", event.request.url)
   event.respondWith(handleRequest(event.request))
 })
