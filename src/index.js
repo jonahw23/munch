@@ -44,7 +44,7 @@ const html = todos => `<!DOCTYPE html>
                   <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Sign In to Munch
                   </h3>
-                  <button type="button" id="closeLoginModal" onclick="toggleLoginModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                  <button type="button" id="closeLoginModal" class="loginComponent text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                       <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                       </svg>
@@ -75,7 +75,7 @@ const html = todos => `<!DOCTYPE html>
         <img class="h-16 w-auto" src="https://i.imgur.com/46U1Z7J.png" alt="">
       </div>
       <div id="avatar" class="hidden">
-        <img id="avatarImg" class="w-10 h-10 rounded-full" onClick="toggleUserDropdown()" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
+        <img id="avatarImg" class="avatar w-10 h-10 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
         <div id="userDropdown" class="hidden absolute right-0 mt-3 mr-3 w-auto overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-gray-900/5">
             <div class="px-4 py-1 mt-1 text-sm text-gray-900 dark:text-white">
               <div id="username">User logged in</div>
@@ -88,7 +88,7 @@ const html = todos => `<!DOCTYPE html>
             </div>
         </div>
       </div>
-      <button type="button" id="loginButton" onclick="toggleLoginModal(); return false;" class="hidden bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <button type="button" id="loginButton" class="hidden loginComponent bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
         <a href="#" class="text-sm font-bold leading-6 text-gray-900">Log in</a>
       </button>
     </div>
@@ -531,6 +531,14 @@ const html = todos => `<!DOCTYPE html>
         locationInput.classList.add("hidden")
       }
     }
+
+    var loginAccessors = document.getElementsByClassName("loginComponent")
+    for(let i = 0; i < loginAccessors.length; i++){
+      loginAccessors[i].addEventListener('click', function() { toggleLoginModal(); }, false)
+    }
+
+    var avatar = document.querySelector("#avatar")
+    avatar.addEventListener('click', function() { toggleUserDropdown(); }, false)
 
     var toggleLoginModal = function(){
       var loginModal = document.querySelector("#loginModal")
