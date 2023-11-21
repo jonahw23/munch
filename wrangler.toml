@@ -11,6 +11,10 @@ crons = [ ]
 id = "4532439fcfb44ed7b4d8da03a308d6f3"
 binding = "EXAMPLE_DATA"
 
+[[kv_namespaces]]
+id = "024c03590fa44897acbf32d85c3e9a1d"
+binding = "TRACKER"
+
 [vars]
 
 

@@ -28,86 +28,11 @@ const html = todos => `<!DOCTYPE html>
 
     <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
 
-    <script type="module">
-      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
-      import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
-
-      const firebaseApp = initializeApp({
-          apiKey: FIREBASE_KEY,
-          authDomain: "munch-f0a4d.firebaseapp.com",
-          projectId: "munch-f0a4d",
-          storageBucket: "munch-f0a4d.appspot.com",
-          messagingSenderId: "765807621903",
-          appId: "1:765807621903:web:db47c5f683867b3e5c307a",
-          measurementId: "G-D8H5Y971ZC"
-        });
-      
-        const auth = getAuth(firebaseApp);
-
-        const ui = new firebaseui.auth.AuthUI(auth);
-
-        const uiConfig = {
-          signInSuccessUrl: './',
-          signInOptions: [
-            // Leave the lines as is for the providers you want to offer your users.
-            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            firebase.auth.EmailAuthProvider.PROVIDER_ID,
-            // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-            // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-            // firebase.auth.GithubAuthProvider.PROVIDER_ID,
-            // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-          ],
-          // Terms of service url.
-          tosUrl: './#tos',
-          // Privacy policy url.
-          privacyPolicyUrl: './#privacy',
-          'signInFlow': 'popup',
-        };
-
-        // The start method will wait until the DOM is loaded.
-
-        //signInWithEmailAndPassword(auth, "jthirdextra@gmail.com", "Password123")
-      
-        onAuthStateChanged(auth, user => {
-          var login = document.querySelector("#firebaseuiAuthContainer")
-          var loginButton = document.querySelector("#loginButton")
-          var avatar = document.querySelector("#avatar")
-
-          if (user) {
-            var username = document.querySelector("#username")
-            var useremail = document.querySelector("#email")
-            var signoutbutton = document.querySelector("#signOutButton")
-            var avatarImg = document.querySelector("#avatarImg")
-
-            loginButton.classList.add("hidden")
-            avatar.classList.remove("hidden")
-            useremail.innerText = user.email
-
-            if(user.photoURL){
-              avatarImg.src = user.photoURL
-            }
-
-            signoutbutton.onclick = function(){
-              signOut(auth)
-            }
-
-            console.log('Logged in as ' + user.email );
-            console.log(user)
-            
-          } else {
-            ui.start('#firebaseuiAuthContainer', uiConfig);
-            loginButton.classList.remove("hidden")
-            avatar.classList.add("hidden")
-            console.log('No user');
-          }
-        }, error => {
-          console.log("error")
-        });
-    </script>
-
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css" />
 
   </head>
+
+  <button id="userNumButton"></button>
 
   <!-- Login modal -->
   <div id="loginModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-black bg-opacity-50 max-h-full">
@@ -150,7 +75,7 @@ const html = todos => `<!DOCTYPE html>
         <img class="h-16 w-auto" src="https://i.imgur.com/46U1Z7J.png" alt="">
       </div>
       <div id="avatar" class="hidden">
-        <img id="avatarImg" class="w-10 h-10 rounded-full" onClick="toggleUserDropdown()" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Rounded avatar">
+        <img id="avatarImg" class="w-10 h-10 rounded-full" onClick="toggleUserDropdown()" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
         <div id="userDropdown" class="hidden absolute right-0 mt-3 mr-3 w-auto overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-gray-900/5">
             <div class="px-4 py-1 mt-1 text-sm text-gray-900 dark:text-white">
               <div id="username">User logged in</div>
@@ -226,7 +151,201 @@ const html = todos => `<!DOCTYPE html>
     </div>
   </body>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
+    import { getDatabase, ref, child, set, onValue } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js'
+
+    const firebaseApp = initializeApp({
+        apiKey: "AIzaSyBZu64xbCwI4jZHjHYLr0xN0YqoPw8GK_M",
+        authDomain: "munch-f0a4d.firebaseapp.com",
+        projectId: "munch-f0a4d",
+        storageBucket: "munch-f0a4d.appspot.com",
+        messagingSenderId: "765807621903",
+        appId: "1:765807621903:web:db47c5f683867b3e5c307a",
+        measurementId: "G-D8H5Y971ZC",
+        databaseURL: "https://munch-f0a4d-default-rtdb.firebaseio.com/"
+      });
+    
+      const auth = getAuth(firebaseApp);
+
+      function startUpWithCurrent(){
+        const user = auth.currentUser;
+        runStartUp(user)
+      }
+
+      const ui = new firebaseui.auth.AuthUI(auth);
+
+      const uiConfig = {
+        signInSuccessUrl: './',
+        signInOptions: [
+          // Leave the lines as is for the providers you want to offer your users.
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+          // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+          // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+        ],
+        // Terms of service url.
+        tosUrl: './#tos',
+        // Privacy policy url.
+        privacyPolicyUrl: './#privacy',
+        'signInFlow': 'popup',
+      };
+
+      // The start method will wait until the DOM is loaded.
+
+      //signInWithEmailAndPassword(auth, "jthirdextra@gmail.com", "Password123")
+
+      function runStartUp ( user ){
+        const database = getDatabase(firebaseApp);
+
+        const loadUser = ref(database, 'users/' + user.uid);
+        onValue(loadUser, (snapshot) => {
+
+          var currentUser = {}
+          var userNum = 0;
+          var votes = {}
+          
+          var nameBlocks = document.getElementsByClassName("nameBlock")
+          for(let i = 0; i < nameBlocks.length; i++){ // set the user votes to the current blocks
+            //console.log(nameBlocks[i])
+            //votes[nameBlocks[i].dataset.track] = nameBlocks[i].dataset.votes // we dont want the total number of votes
+            votes[nameBlocks[i].dataset.track] = 0
+          }
+          console.log("Votes", votes)
+
+          if(snapshot.val() !== null){
+            currentUser = snapshot.val();
+
+            userNum = currentUser.usernum
+
+            for (const [key, value] of Object.entries(currentUser.uservotes)) { // set votes equal to the users votes
+              if(key in votes){
+                votes[key] = value
+              }
+              else{ // if there are votes that don't exist any more, delete them
+                delete currentUser.uservotes[key] // changed locally
+                set(ref(database, 'users/' + user.uid), currentUser);
+              }
+            }
+          }
+          else { // first time this user id is seen
+            var user_data = {
+              username: user.displayName,
+              useremail: user.email,
+              usernum: 0,
+              uservotes: votes,
+            }
+            set(ref(database, 'users/' + user.uid), user_data);
+          }
+
+          var numButton = document.querySelector("#userNumButton")
+          numButton.innerText = userNum
+          numButton.onclick = function(){
+            set(ref(database, 'users/' + user.uid + '/usernum'), userNum + 1);
+            numButton.innerText = userNum + 1
+          }
+
+          var upVoteButtons = document.getElementsByName("upV")
+          for(let i = 0; i < upVoteButtons.length; i++){
+            if(votes[upVoteButtons[i].id.substring(1)] === 1){
+              for (const child of upVoteButtons[i].children) {
+                child.setAttribute("stroke", "orange")
+              }
+            }
+            upVoteButtons[i].onclick = function(evt) {
+              var button = evt.currentTarget
+
+              if(votes[button.id.substring(1)] !== 1){
+                votes[button.id.substring(1)] = 1;
+                currentUser.uservotes = votes
+                console.log("Current user", currentUser)
+                set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+
+                for (const child of button.children) {
+                  child.setAttribute("stroke", "orange")
+                }
+                var downButton = document.querySelector("[name='downV'][id='d" + button.id.substring(1) + "']")
+                for (const child of downButton.children) {
+                  child.setAttribute("stroke", "currentColor")
+                }
+                addUpVote(button.dataset.count)
+              }
+            }
+          }
+          var downVoteButtons = document.getElementsByName("downV")
+          for(let i = 0; i < downVoteButtons.length; i++){
+            if(votes[downVoteButtons[i].id.substring(1)] === -1){
+              for (const child of downVoteButtons[i].children) {
+                child.setAttribute("stroke", "orange")
+              }
+            }
+            downVoteButtons[i].onclick = function(evt) {
+              var button = evt.currentTarget
+              
+              if(votes[button.id.substring(1)] !== -1){
+                votes[button.id.substring(1)] = -1;
+                currentUser.uservotes = votes
+                set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+
+                for (const child of button.children) {
+                  child.setAttribute("stroke", "orange")
+                }
+                var downButton = document.querySelector("[name='upV'][id='u" + button.id.substring(1) + "']")
+                for (const child of downButton.children) {
+                  child.setAttribute("stroke", "currentColor")
+                }
+                addDownVote(button.dataset.count)
+              }
+            }
+          }
+
+        }); // end loaded user logic
+
+        var username = document.querySelector("#username")
+        var useremail = document.querySelector("#email")
+        var signoutbutton = document.querySelector("#signOutButton")
+        var avatarImg = document.querySelector("#avatarImg")
+
+        loginButton.classList.add("hidden")
+        avatar.classList.remove("hidden")
+        useremail.innerText = user.email
+
+        if(user.photoURL){
+          avatarImg.src = user.photoURL
+        }
+
+        if(!user.usernum){
+          user.usernum = 0
+        }
+
+        signoutbutton.onclick = function(){
+          signOut(auth)
+        }
+
+        console.log('Logged in as ' + user.email );
+        console.log(user)
+      }
+    
+      onAuthStateChanged(auth, user => {
+        var login = document.querySelector("#firebaseuiAuthContainer")
+        var loginButton = document.querySelector("#loginButton")
+        var avatar = document.querySelector("#avatar")
+
+        if (user) {
+          runStartUp(user)
+        } else {
+          ui.start('#firebaseuiAuthContainer', uiConfig);
+          loginButton.classList.remove("hidden")
+          avatar.classList.add("hidden")
+          console.log('No user');
+        }
+      }, error => {
+        console.log("error")
+      });
+    
   const buildings = [
     "Not Listed",
     "905 Annex V",
@@ -334,12 +453,24 @@ const html = todos => `<!DOCTYPE html>
 
     const foods = ["Candy", "Snacks", "Pizza", "Desserts"]
 
+    function addUpVote(i) {
+      window.todos[i].upvotes += 1
+      updateTodos()
+    }
+
+    function addDownVote(i) {
+      window.todos[i].upvotes -= 1
+      updateTodos()
+    }
+
     window.todos = ${todos || []}
-    const FIREBASE_KEY = "AIzaSyBZu64xbCwI4jZHjHYLr0xN0YqoPw8GK_M"
+
+    console.log(window.todos)
 
     var updateTodos = function() {
       fetch("/", { method: 'PUT', body: JSON.stringify({ todos: window.todos }) })
       populateTodos()
+      startUpWithCurrent()
     }
 
     var completeTodo = function(evt) {
@@ -359,7 +490,7 @@ const html = todos => `<!DOCTYPE html>
       var target = outer.dataset.count
       var inners = document.getElementsByClassName("accordionText")
 
-      for(i = 0; i < inners.length; i++){
+      for(let i = 0; i < inners.length; i++){
           if(inners[i].id == target){
             inners[i].setAttribute("class", accordianBaseText)
           }
@@ -378,7 +509,7 @@ const html = todos => `<!DOCTYPE html>
       buildingBox.setValue = "Location"
       buildingBox.setSelected = true
       buildingContainer.appendChild(buildingBox)
-      for(i = 0; i < buildings.length; i++){
+      for(let i = 0; i < buildings.length; i++){
         var buildingAdd = document.createElement("option")
         //console.log(buildings[i])
         buildingAdd.innerText = buildings[i]
@@ -437,7 +568,7 @@ const html = todos => `<!DOCTYPE html>
 
     var fillFoods = function(){
       var foodContainer = document.querySelector("#foodType")
-      console.log(foodContainer)
+      //console.log("food", foodContainer)
       foodContainer.innerHTML = null
 
       var title = document.createElement("div")
@@ -445,7 +576,7 @@ const html = todos => `<!DOCTYPE html>
       title.setAttribute("Class", "ms-2 mb-5 text-sm font-medium text-gray-900 dark:text-gray-300")
       foodContainer.appendChild(title)
       
-      for(i = 0; i < foods.length; i++){
+      for(let i = 0; i < foods.length; i++){
         var foodAdd = document.createElement("input")
         var foodLabel = document.createElement("label")
         var foodWrap = document.createElement("div")
@@ -504,7 +635,7 @@ const html = todos => `<!DOCTYPE html>
       var todoContainer = document.querySelector("#todos")
       todoContainer.innerHTML = null
 
-      count = 0;
+      var count = 0;
 
       window.todos.forEach(todo => {
         // display
@@ -518,20 +649,22 @@ const html = todos => `<!DOCTYPE html>
         upper.setAttribute("class",  "flex lg:flex-1 items-center justify-between w-full")
         el.appendChild(upper)
 
-        var name = document.createElement("div")
-        name.className = todo.completed ? "line-through" : ""
-        name.classList.add("text-left")
-        name.setAttribute("style",  "font-weight: 600;")
-        name.id = "name " + count 
-        name.innerText = todo.upvotes + " " + todo.name
+        var nameBlock = document.createElement("div")
+        nameBlock.className = todo.completed ? "line-through" : ""
+        nameBlock.classList.add("text-left")
+        nameBlock.setAttribute("style",  "font-weight: 600;")
+        nameBlock.id = todo.track
+        nameBlock.innerText = todo.upvotes + " " + todo.name + " (" + todo.track + ")"
+        nameBlock.dataset.count = count
+        nameBlock.dataset.votes = todo.upvotes
+        nameBlock.dataset.track = todo.track
+        nameBlock.className += " nameBlock"
 
         var upV = document.createElement("button")
+        upV.name = "upV"
+        upV.id = "u" + todo.track
+        upV.dataset.count = count
         upV.type = "button"
-        upV.onclick = function () {
-          todo.upvotes += 1
-          //console.log(todo.upvotes)
-          updateTodos()
-        }
         upV.className = "bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
 
         var upImg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -555,10 +688,9 @@ const html = todos => `<!DOCTYPE html>
 
         var downV = document.createElement("button")
         downV.type = "button"
-        downV.onclick = function () {
-          todo.upvotes -= 1
-          updateTodos()
-        }
+        downV.id = "d" + todo.track
+        downV.name = "downV"
+        downV.dataset.count = count
         downV.className = "bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
 
         var downImg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -658,7 +790,7 @@ const html = todos => `<!DOCTYPE html>
         var description = foodOptions.length > 0 ? "" : newLine + "No food type specified"
         if(foodOptions.length > 0){
           description += newLine + "Food types:"
-          for(i = 0; i < foodOptions.length; i++){
+          for(let i = 0; i < foodOptions.length; i++){
             description += newLine + "• " + foodOptions[i]
           } // This is how I have to do nextLine / newLine
         }
@@ -672,7 +804,7 @@ const html = todos => `<!DOCTYPE html>
         votes.appendChild(downV)
 
         //el.appendChild(checkbox)
-        upper.appendChild(name)
+        upper.appendChild(nameBlock)
         upper.appendChild(xout)
         upper.appendChild(votes)
         el.appendChild(inside)
@@ -687,7 +819,7 @@ const html = todos => `<!DOCTYPE html>
 
     var getChecked = function() {
       var returns = []
-      for(i = 0; i < foods.length; i++){
+      for(let i = 0; i < foods.length; i++){
         var box = document.querySelector("input[value=" + CSS.escape(foods[i]) + "]")
         //console.log(box.checked)
         if(box.checked){
@@ -740,7 +872,9 @@ const html = todos => `<!DOCTYPE html>
         console.log(event.value)
         console.log(locationVal)
         var description = event.value + " at " + locationVal
-        window.todos = [].concat(todos, { id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, hours: timeUp, upvotes: 1, completed: false })
+        var randTrack = Math.random() * 100000000000000000
+        console.log(randTrack)
+        window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, hours: timeUp, upvotes: 1, completed: false })
         event.value = "Event Type"
         location.value = "Location"
         roomNum.value = ""
@@ -755,10 +889,12 @@ const html = todos => `<!DOCTYPE html>
   </script>
 </html>`
 
-const defaultData = { todos: [] }
+const defaultData = { todos: [], track : 0 }
 
 const setCache = (key, data) => EXAMPLE_DATA.put(key, data)
 const getCache = key => EXAMPLE_DATA.get(key)
+const setTracker = (key, data) => TRACKER.put("tracker", data)
+const getTracker = i => TRACKER.get("tracker")
 //const FIREBASE_KEY = FIREBASE_API_KEY
 const FIREBASE_KEY = "AIzaSyBZu64xbCwI4jZHjHYLr0xN0YqoPw8GK_M"
 
@@ -775,16 +911,17 @@ async function getTodos(request) {
     data = JSON.parse(cache)
   }
   const body = html(JSON.stringify(data.todos || []))
+  //console.log("Bodyhere", body)
   return new Response(body, {
-    headers: { 'Content-Type': 'text/html' },
+    headers: { 'Content-Type': 'text/html' }, 
   })
 }
 
 async function updateTodos(request) {
+  const cacheKey = 1
   const body = await request.text()
   const ip = request.headers.get('CF-Connecting-IP')
   //const cacheKey = `data-${ip}`
-  const cacheKey = 1
   try {
     JSON.parse(body)
     await setCache(cacheKey, body)
@@ -803,6 +940,6 @@ async function handleRequest(request) {
 }
 
 addEventListener('fetch', event => {
-  console.log("Url", event.request.url)
+  //console.log("Url", event.request.url)
   event.respondWith(handleRequest(event.request))
 })
