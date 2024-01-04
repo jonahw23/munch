@@ -32,7 +32,8 @@ const html = todos => `<!DOCTYPE html>
 
   </head>
 
-  <button id="userNumButton"></button>
+  <!-- Unhide this to test basic firebasing -->
+  <button id="userNumButton" class="hidden"></button>
 
   <!-- Login modal -->
   <div id="loginModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-black bg-opacity-50 max-h-full">
@@ -202,8 +203,7 @@ const html = todos => `<!DOCTYPE html>
         const database = getDatabase(firebaseApp);
 
         const loadUser = ref(database, 'users/' + user.uid);
-        onValue(loadUser, (snapshot) => {
-
+        onValue(loadUser, (snapshot) => { // if this is not being called, it's a security issue
           var currentUser = {}
           var userNum = 0;
           var votes = {}
@@ -220,15 +220,21 @@ const html = todos => `<!DOCTYPE html>
             currentUser = snapshot.val();
 
             userNum = currentUser.usernum
-
-            for (const [key, value] of Object.entries(currentUser.uservotes)) { // set votes equal to the users votes
-              if(key in votes){
-                votes[key] = value
+            console.log(currentUser)
+            if(currentUser.uservotes){
+              for (const [key, value] of Object.entries(currentUser.uservotes)) { // set votes equal to the users votes
+                if(key in votes){
+                  votes[key] = value
+                }
+                else{ // if there are votes that don't exist any more, delete them
+                  delete currentUser.uservotes[key] // changed locally
+                  set(ref(database, 'users/' + user.uid), currentUser);
+                }
               }
-              else{ // if there are votes that don't exist any more, delete them
-                delete currentUser.uservotes[key] // changed locally
-                set(ref(database, 'users/' + user.uid), currentUser);
-              }
+            }
+            else{
+              currentUser.uservotes = votes
+              set(ref(database, 'users/' + user.uid), currentUser);
             }
           }
           else { // first time this user id is seen
@@ -243,6 +249,7 @@ const html = todos => `<!DOCTYPE html>
 
           var numButton = document.querySelector("#userNumButton")
           numButton.innerText = userNum
+          console.log("set user num to", userNum)
           numButton.onclick = function(){
             set(ref(database, 'users/' + user.uid + '/usernum'), userNum + 1);
             numButton.innerText = userNum + 1
@@ -259,6 +266,9 @@ const html = todos => `<!DOCTYPE html>
               var button = evt.currentTarget
 
               if(votes[button.id.substring(1)] !== 1){
+                if(votes[button.id.substring(1)] == -1){
+                  addUpVote(button.dataset.count)
+                }
                 votes[button.id.substring(1)] = 1;
                 currentUser.uservotes = votes
                 console.log("Current user", currentUser)
@@ -286,6 +296,9 @@ const html = todos => `<!DOCTYPE html>
               var button = evt.currentTarget
               
               if(votes[button.id.substring(1)] !== -1){
+                if(votes[button.id.substring(1)] == 1){
+                  addDownVote(button.dataset.count)
+                }
                 votes[button.id.substring(1)] = -1;
                 currentUser.uservotes = votes
                 set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
@@ -301,7 +314,9 @@ const html = todos => `<!DOCTYPE html>
               }
             }
           }
-
+        }, // end snapshot logic
+        error => {
+          console.log("Error", error)
         }); // end loaded user logic
 
         var username = document.querySelector("#username")
@@ -662,7 +677,7 @@ const html = todos => `<!DOCTYPE html>
         nameBlock.classList.add("text-left")
         nameBlock.setAttribute("style",  "font-weight: 600;")
         nameBlock.id = todo.track
-        nameBlock.innerText = todo.upvotes + " " + todo.name + " (" + todo.track + ")"
+        nameBlock.innerText = todo.upvotes + " " + todo.name // + " (" + todo.track + ")" // uncomment to add the tracking number
         nameBlock.dataset.count = count
         nameBlock.dataset.votes = todo.upvotes
         nameBlock.dataset.track = todo.track
