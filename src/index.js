@@ -7,6 +7,8 @@ const html = todos => `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Munch</title>
     <link rel="icon" type="image/x-icon" href="https://i.imgur.com/V3vGZfC.png">
+    
+    <!-- Get rid of the min below to see the full style sheet -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
 
     <style>
@@ -17,6 +19,20 @@ const html = todos => `<!DOCTYPE html>
         background-color: rgb(251 146 60); /* change to your desired color */
     }
     </style>
+
+    <!-- Map style pieces -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+    <style>
+      #map {
+        height: 40vh; 
+        width: 100%; 
+      }
+    </style>
+
+    <!-- Map-related files -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
 
     <script src="https://www.gstatic.com/firebasejs/9.0.0-beta.5/firebase-app-compat.js"></script>
    
@@ -32,7 +48,7 @@ const html = todos => `<!DOCTYPE html>
 
   </head>
 
-  <!-- Unhide this to test basic firebasing -->
+  <!-- Unhide this button to test basic firebasing -->
   <button id="userNumButton" class="hidden"></button>
 
   <!-- Login modal -->
@@ -96,7 +112,7 @@ const html = todos => `<!DOCTYPE html>
     </nav>
     </header>
 
-  <body class="bg-blue-100">
+  <body class="bg-blue-100" style="height: 100vh">
     <div class="w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
       <div class="bg-white h-full shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Submit a New Food Event!</h1>
@@ -148,7 +164,9 @@ const html = todos => `<!DOCTYPE html>
       <div class="h-full bg-white shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Current Food Events</h1>
         <div class="mt-4" id="todos"></div>
+        <div id="map" class="mt-4"></div>
       </div>
+
     </div>
   </body>
 
@@ -156,6 +174,27 @@ const html = todos => `<!DOCTYPE html>
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
     import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
     import { getDatabase, ref, child, set, onValue } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js'
+
+    const map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        })
+      ],
+      view: new ol.View({
+        center: [0, 0],
+        zoom: 0
+      })
+    });
+
+    function CenterMap(long, lat) {
+      console.log("Long: " + long + " Lat: " + lat);
+      map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));
+      map.getView().setZoom(15);
+    }
+
+    CenterMap(-77.6765, 43.0828) // center at RIT campus
 
     const firebaseApp = initializeApp({
         apiKey: "AIzaSyBZu64xbCwI4jZHjHYLr0xN0YqoPw8GK_M",
@@ -220,7 +259,7 @@ const html = todos => `<!DOCTYPE html>
             currentUser = snapshot.val();
 
             userNum = currentUser.usernum
-            console.log(currentUser)
+            console.log("Current user", currentUser)
             if(currentUser.uservotes){
               for (const [key, value] of Object.entries(currentUser.uservotes)) { // set votes equal to the users votes
                 if(key in votes){
@@ -283,7 +322,22 @@ const html = todos => `<!DOCTYPE html>
                 }
                 addUpVote(button.dataset.count)
               }
-            }
+              else{
+                votes[button.id.substring(1)] = 0;
+                currentUser.uservotes = votes
+                console.log("Current user", currentUser)
+                set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+
+                for (const child of button.children) {
+                  child.setAttribute("stroke", "currentColor")
+                }
+                var downButton = document.querySelector("[name='downV'][id='d" + button.id.substring(1) + "']")
+                for (const child of downButton.children) {
+                  child.setAttribute("stroke", "currentColor")
+                }
+                addDownVote(button.dataset.count)
+              }
+            } // end upvote button function
           }
           var downVoteButtons = document.getElementsByName("downV")
           for(let i = 0; i < downVoteButtons.length; i++){
@@ -311,8 +365,23 @@ const html = todos => `<!DOCTYPE html>
                   child.setAttribute("stroke", "currentColor")
                 }
                 addDownVote(button.dataset.count)
+              } 
+              else{
+                votes[button.id.substring(1)] = 0;
+                currentUser.uservotes = votes
+                console.log("Current user", currentUser)
+                set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+
+                for (const child of button.children) {
+                  child.setAttribute("stroke", "currentColor")
+                }
+                var downButton = document.querySelector("[name='downV'][id='d" + button.id.substring(1) + "']")
+                for (const child of downButton.children) {
+                  child.setAttribute("stroke", "currentColor")
+                }
+                addUpVote(button.dataset.count)
               }
-            }
+            } // end downvote button function
           }
         }, // end snapshot logic
         error => {
@@ -341,7 +410,7 @@ const html = todos => `<!DOCTYPE html>
         }
 
         console.log('Logged in as ' + user.email );
-        console.log(user)
+        console.log("User:", user)
       }
     
       onAuthStateChanged(auth, user => {
