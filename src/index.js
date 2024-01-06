@@ -128,7 +128,7 @@ const html = todos => `<!DOCTYPE html>
               <option value="Fundraiser">Fundraiser</option>
             </select>
 
-            <select id="eventLocation" onchange="checkNotListed()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <select id="eventLocation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
               <option selected>Location</option>
             </select>
 
@@ -139,7 +139,7 @@ const html = todos => `<!DOCTYPE html>
                 <input id="roomNumInput" placeholder=" Room Number" type="number" min="0" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
               </div>
               <div class="flex items-center mb-4">
-                  <input id="outsideLocation" onchange="checkOutside()" type="checkbox" value="" class="w-4 h-4 ml-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                  <input id="outsideLocation" type="checkbox" value="" class="w-4 h-4 ml-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                   <label for="outsideLocation" class="ms-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Located outside</label>
                 </div>
             </div>
@@ -175,27 +175,7 @@ const html = todos => `<!DOCTYPE html>
     import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
     import { getDatabase, ref, child, set, onValue } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js'
 
-    const map = new ol.Map({
-      target: 'map',
-      layers: [
-        new ol.layer.Tile({
-          source: new ol.source.OSM()
-        })
-      ],
-      view: new ol.View({
-        center: [0, 0],
-        zoom: 0
-      })
-    });
-
-    function CenterMap(long, lat) {
-      console.log("Long: " + long + " Lat: " + lat);
-      map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));
-      map.getView().setZoom(15);
-    }
-
-    CenterMap(-77.6765, 43.0828) // center at RIT campus
-
+    // Begin firebase auth code
     const firebaseApp = initializeApp({
         apiKey: "AIzaSyBZu64xbCwI4jZHjHYLr0xN0YqoPw8GK_M",
         authDomain: "munch-f0a4d.firebaseapp.com",
@@ -535,6 +515,110 @@ const html = todos => `<!DOCTYPE html>
     "WAL Wallace Library",
     "WEL Welcome Center",]
 
+    const coords = {
+      "Not Listed": [0,0],
+      "905 Annex V": [0,0],
+      "906 Annex VI": [0,0],
+      "907 Annex VII": [0,0],
+      "908 Annex VIII": [0,0],
+      "909 Annex IX": [0,0],
+      "AUG August Center": [43.08417929383888, -77.67212814056265],
+      "BHA Frances Baker Hall A": [43.08408914897436, -77.66943073414521],
+      "BHB Frances Baker Hall B": [43.084081447762095, -77.66866098416261],
+      "BLC Bausch & Lomb Center": [0,0],
+      "BOO James E. Booth Hall": [0,0],
+      "BRN Brown Hall": [0,0],
+      "CAR Chester F. Carlson Center for Imaging Science": [43.085904342527634, -77.67767046096698],
+      "CBT Center for Bioscience Education & Technology": [0,0],
+      "CGH Carlton Gibson Hall": [43.08572044084291, -77.6677090445869],
+      "CHA Eugene Colby Hall A": [0,0],
+      "CHB Eugene Colby Hall B": [0,0],
+      "CHC Eugene Colby Hall E": [0,0],
+      "CHD Eugene Colby Hall D": [0,0],
+      "CHE Eugene Colby Hall E": [0,0],
+      "CHF Eugene Colby Hall (F)": [0,0],
+      "CLK George H. Clark Gymnasium": [0,0],
+      "COL Munsell Color Science Laboratory": [0,0],
+      "CPC Campus Center": [0,0],
+      "CRS Crossroads": [0,0],
+      "CSD Student Development Center": [0,0],
+      "CYB Cybersecurity Hall": [0,0],
+      "DSP Fredericka Douglass Sprague Perry Hall": [0,0],
+      "EAS George Eastman Hall": [0,0],
+      "ENG Engineering Hall": [0,0],
+      "ENT Engineering Technology Hall": [0,0],
+      "FHA Helen Fish Hall (A)": [0,0],
+      "FHB Helen Fish Hall B": [0,0],
+      "FHC Helen Fish Hall C": [0,0],
+      "FMS Facilities Management Services": [0,0],
+      "FNK 40 Franklin Street": [0,0],
+      "GAN Frank E. Gannett Hall": [0,0],
+      "GHA Greek House A - Zeta Tau Alpha": [0,0],
+      "GHB Greek House B - Delta Phi Epsilon": [0,0],
+      "GHC Greek House C - Alpha Sigma Alpha": [0,0],
+      "GHD Greek House D - Phi Kappa Psi": [0,0],
+      "GHE Greek House E - Alpha Xi Delta": [0,0],
+      "GHF Greek House F - Pi Kappa Phi": [0,0],
+      "GLE James E. Gleason Hall": [0,0],
+      "GOB Gosnell Boathouse": [0,0],
+      "GOL Golisano Hall": [0,0],
+      "GOR Gordon Field House & Activities Center": [43.085082087108894, -77.67226754316222],
+      "GOS Thomas Gosnell Hall": [0,0],
+      "GVC Global Village Way C": [0,0],
+      "GVD Global Village Way D": [0,0],
+      "GVE Global Village Way E": [0,0],
+      "GVP Global Village Plaza": [0,0],
+      "GWH Grace Watson Hall": [43.08366074828328, -77.66912721850348],
+      "HAC Hale-Andrews Student Life Center": [43.08455245869932, -77.67222248855687],
+      "HLC Hugh L. Carey Hall": [0,0],
+      "ICC RIT Inn & Conference Center": [0,0],
+      "INS Institute Hall": [0,0],
+      "JEF 175 Jefferson Road": [0,0],
+      "KGH Kate Gleason Hall": [43.08435368710708, -77.66809233696328],
+      "LAC Laboratory for Applied Computing": [0,0],
+      "LBJ Lyndon Baines Johnson Hall": [0,0],
+      "LBR Liberal Arts Hall": [0,0],
+      "LEL Leenhouts Lodge at the Tait Preserve": [0,0],
+      "LH Liberty Hill": [0,0],
+      "LOB Joseph M. Lobozzo Alumni House": [0,0],
+      "LOW Max Lowenthal Hall": [0,0],
+      "MEH Mark Ellingson Hall": [0,0],
+      "MON Monroe Hall": [0,0],
+      "MPT Music Performance Theater": [0,0],
+      "MSS MAGIC Spell Studios": [0,0],
+      "OBS Observatory House": [0,0],
+      "ORN Orange Hall": [0,0],
+      "PGA Perkins Green Apartments": [0,0],
+      "POL Gene Polisseni Center": [0,0],
+      "PPD 100 Park Point Drive": [0,0],
+      "PTH Peter Peterson Hall": [43.08601041501198, -77.66855244166551],
+      "RED Red Barn": [0,0],
+      "RHA Residence Hall A": [43.08423479373873, -77.66979005180497],
+      "RHB Residence Hall B": [43.08465476322702, -77.6694394257646],
+      "RHC Residence Hall C": [43.08517221242193, -77.66946288690295],
+      "RHD Residence Hall D": [0,0],
+      "RIA Frank Ritter Ice Arena": [0,0],
+      "RKA Riverknoll Apartments": [0,0],
+      "ROS Lewis P. Ross Hall": [0,0],
+      "RSC Rosica Hall": [0,0],
+      "SAN Sands Family Studios": [0,0],
+      "SAU Student Alumni Union": [0,0],
+      "SHD Student Hall for Exploration and Development": [0,0],
+      "SHH Sol Heumann Hall": [0,0],
+      "SIH Student Innovation Hall": [0,0],
+      "SLA Louise Slaughter Hall": [0,0],
+      "SMT Schmitt Interfaith Center": [0,0],
+      "SUS Sustainability Institute Hall": [0,0],
+      "TPD 125 Tech Park Drive": [0,0],
+      "UCS University Commons Suites": [0,0],
+      "UNI University Gallery": [0,0],
+      "USC University Services Center": [0,0],
+      "VIG Vignelli Center for Design Studies": [0,0],
+      "VRB Vehicle Repair Building": [0,0],
+      "WAL Wallace Library": [0,0],
+      "WEL Welcome Center": [0,0],
+    }
+
     const foods = ["Candy", "Snacks", "Pizza", "Desserts"]
 
     function addUpVote(i) {
@@ -549,7 +633,94 @@ const html = todos => `<!DOCTYPE html>
 
     window.todos = ${todos || []}
 
-    console.log(window.todos)
+    console.log("Events/todos:", window.todos)
+
+    // Begin map code
+
+    const map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        })
+      ],
+      view: new ol.View({
+        center: [0, 0],
+        zoom: 0
+      })
+    });
+
+    function CenterMap(long, lat) {
+      console.log("Long: " + long + " Lat: " + lat);
+      map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));
+      map.getView().setZoom(15);
+    }
+
+    CenterMap(-77.6765, 43.0828) // center at RIT campus
+
+    // var layer = new ol.layer.Vector({
+    //     source: new ol.source.Vector({
+    //         features: [
+    //             new ol.Feature({
+    //                 geometry: new ol.geom.Point(ol.proj.fromLonLat([-77.6765, 43.0828]))
+    //             })
+    //         ]
+    //     })
+    // });
+    // map.addLayer(layer);
+
+    // const popup = new ol.Overlay({
+    //   element: document.getElementById('popup'),
+    // });
+    // map.addOverlay(popup);
+
+    // const element = popup.getElement();
+    // map.on('click', function (evt) {
+    //   const coordinate = evt.coordinate;
+    //   const hdms = ol.coordinate.toStringHDMS(ol.proj.fromLonLat(coordinate));
+    //   popup.setPosition(coordinate);
+    //   console.log(coordinate)
+    // });
+
+    var features = []
+
+    for(let i = 0; i < todos.length; i++){
+
+      const pointCoord = coords[todos[i].location].reverse() // google cords are reversed
+      console.log(pointCoord)
+
+      const newFeature = new ol.Feature({
+        geometry: new ol.geom.Point(pointCoord),
+      });
+      
+      const newIcon = new ol.style.Style({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat(pointCoord)),
+        image: new ol.style.Icon({
+          anchor: [0.5, 0.9], 
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          src: 'https://i.imgur.com/JB6ZaAe.png',
+          scale: 0.3,
+        }),
+      });
+
+      newFeature.setStyle(newIcon)
+      features.push(newFeature)
+    }
+
+    console.log("Features", features)
+
+    const icons = new ol.source.Vector({})
+    icons.addFeatures(features)
+
+    var vectorLayer = new ol.layer.Vector({
+      renderBuffer: 100000000, // this seems to affect the icon vanishing when it's too small
+      source: icons,
+    });
+
+    map.addLayer(vectorLayer)
+
+    // End map code
 
     var updateTodos = function() {
       fetch("/", { method: 'PUT', body: JSON.stringify({ todos: window.todos }) })
@@ -616,6 +787,9 @@ const html = todos => `<!DOCTYPE html>
       }
     }
 
+    var eventNot = document.getElementById("eventLocation")
+    eventNot.addEventListener('change', function() { checkNotListed(); }, false)
+
     var loginAccessors = document.getElementsByClassName("loginComponent")
     for(let i = 0; i < loginAccessors.length; i++){
       loginAccessors[i].addEventListener('click', function() { toggleLoginModal(); }, false)
@@ -657,6 +831,9 @@ const html = todos => `<!DOCTYPE html>
         locationInput.classList.remove("hidden")
       }
     }
+
+    var eventOutside = document.getElementById("outsideLocation")
+    eventOutside.addEventListener('change', function() { checkOutside(); }, false)
 
     var fillFoods = function(){
       var foodContainer = document.querySelector("#foodType")
