@@ -682,43 +682,47 @@ const html = todos => `<!DOCTYPE html>
     //   console.log(coordinate)
     // });
 
-    var features = []
+    const loadPins = () => {
+      var features = []
 
-    for(let i = 0; i < todos.length; i++){
+      for(let i = 0; i < todos.length; i++){
 
-      const pointCoord = coords[todos[i].location].reverse() // google cords are reversed
-      console.log(pointCoord)
+        const pointCoord = coords[todos[i].location].reverse() // google cords are reversed
+        console.log(pointCoord)
 
-      const newFeature = new ol.Feature({
-        geometry: new ol.geom.Point(pointCoord),
+        const newFeature = new ol.Feature({
+          geometry: new ol.geom.Point(pointCoord),
+        });
+        
+        const newIcon = new ol.style.Style({
+          geometry: new ol.geom.Point(ol.proj.fromLonLat(pointCoord)),
+          image: new ol.style.Icon({
+            anchor: [0.5, 0.9], 
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'fraction',
+            src: 'https://i.imgur.com/JB6ZaAe.png',
+            scale: 0.3,
+          }),
+        });
+
+        newFeature.setStyle(newIcon)
+        features.push(newFeature)
+      }
+
+      console.log("Features", features)
+
+      const icons = new ol.source.Vector({})
+      icons.addFeatures(features)
+
+      var vectorLayer = new ol.layer.Vector({
+        renderBuffer: 100000000, // this seems to affect the icon vanishing when it's too small
+        source: icons,
       });
-      
-      const newIcon = new ol.style.Style({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat(pointCoord)),
-        image: new ol.style.Icon({
-          anchor: [0.5, 0.9], 
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'fraction',
-          src: 'https://i.imgur.com/JB6ZaAe.png',
-          scale: 0.3,
-        }),
-      });
 
-      newFeature.setStyle(newIcon)
-      features.push(newFeature)
+      map.addLayer(vectorLayer)
     }
 
-    console.log("Features", features)
-
-    const icons = new ol.source.Vector({})
-    icons.addFeatures(features)
-
-    var vectorLayer = new ol.layer.Vector({
-      renderBuffer: 100000000, // this seems to affect the icon vanishing when it's too small
-      source: icons,
-    });
-
-    map.addLayer(vectorLayer)
+    loadPins()
 
     // End map code
 
@@ -1151,6 +1155,7 @@ const html = todos => `<!DOCTYPE html>
         isOutside.checked = false
         checkOutside()
         updateTodos()
+        loadPins()
       }
     }
 
