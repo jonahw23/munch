@@ -84,7 +84,7 @@ const html = todos => `<!DOCTYPE html>
   
   <nav class="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
     <div class="flex lg:flex-1 items-center justify-between w-full">
-      <a href="#" class="-m-1.5 mt:0 p-1.5 hidden lg:block">
+      <a href="https://www.rit.edu/" class="-m-1.5 mt:0 p-1.5 hidden lg:block">
         <span class="sr-only">RIT LOGO</span>
         <img class="h-8 w-auto" src="https://www.rit.edu/brandportal/sites/rit.edu.brandportal/files/2020-04/new_RIT_logo1_w.png" alt="">
       </a>
@@ -592,7 +592,7 @@ const html = todos => `<!DOCTYPE html>
       "HAC Hale-Andrews Student Life Center": [43.08455245869932, -77.67222248855687],
       "HLC Hugh L. Carey Hall": [43.08272602758297, -77.67885114501152],
       "ICC RIT Inn & Conference Center": [0,0],
-      "INS Institute Hall": [0,0],
+      "INS Institute Hall": [43.08542499145876, -77.6791176728135],
       "JEF 175 Jefferson Road": [0,0],
       "KGH Kate Gleason Hall": [43.08435368710708, -77.66809233696328],
       "LAC Laboratory for Applied Computing": [0,0],
@@ -617,25 +617,25 @@ const html = todos => `<!DOCTYPE html>
       "RHB Residence Hall B": [43.08465476322702, -77.6694394257646],
       "RHC Residence Hall C": [43.08517221242193, -77.66946288690295],
       "RHD Residence Hall D": [43.085831934990026, -77.66899803126843],
-      "RIA Frank Ritter Ice Arena": [0,0],
+      "RIA Frank Ritter Ice Arena": [43.0852832885352, -77.67392231845965],
       "RKA Riverknoll Apartments": [0,0],
-      "ROS Lewis P. Ross Hall": [0,0],
-      "RSC Rosica Hall": [0,0],
+      "ROS Lewis P. Ross Hall": [43.082487202046394, -77.6779081223646],
+      "RSC Rosica Hall": [43.08601663413455, -77.66942586272694],
       "SAN Sands Family Studios": [0,0],
-      "SAU Student Alumni Union": [0,0],
-      "SHD Student Hall for Exploration and Development": [0,0],
-      "SHH Sol Heumann Hall": [0,0],
-      "SIH Student Innovation Hall": [0,0],
-      "SLA Louise Slaughter Hall": [0,0],
-      "SMT Schmitt Interfaith Center": [0,0],
-      "SUS Sustainability Institute Hall": [0,0],
+      "SAU Student Alumni Union": [43.08400564674267, -77.67435277351996],
+      "SHD Student Hall for Exploration and Development": [43.08398003795007, -77.67579961614729],
+      "SHH Sol Heumann Hall": [43.085489941165434, -77.66715379660876],
+      "SIH Student Innovation Hall": [43.0834220600785, -77.68018677858299],
+      "SLA Louise Slaughter Hall": [43.08493457803417, -77.68220530079356],
+      "SMT Schmitt Interfaith Center": [43.08405473580076, -77.6734886794579],
+      "SUS Sustainability Institute Hall": [43.085372417437384, -77.68128119297896],
       "TPD 125 Tech Park Drive": [0,0],
       "UCS University Commons Suites": [0,0],
       "UNI University Gallery": [0,0],
-      "USC University Services Center": [0,0],
-      "VIG Vignelli Center for Design Studies": [0,0],
+      "USC University Services Center": [43.08336412896962, -77.68009369156634],
+      "VIG Vignelli Center for Design Studies": [43.085294002269634, -77.6777412534232],
       "VRB Vehicle Repair Building": [0,0],
-      "WAL Wallace Library": [0,0],
+      "WAL Wallace Library": [43.083952905560295, -77.67635899714702],
       "WEL Welcome Center": [0,0],
     }
 
@@ -708,25 +708,26 @@ const html = todos => `<!DOCTYPE html>
       for(let i = 0; i < todos.length; i++){
 
         const pointCoord = coords[todos[i].location].reverse() // google cords are reversed
-        console.log(pointCoord)
+        //console.log(pointCoord)
+        if(pointCoord[0] !== 0){
+          const newFeature = new ol.Feature({
+            geometry: new ol.geom.Point(pointCoord),
+          });
+          
+          const newIcon = new ol.style.Style({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat(pointCoord)),
+            image: new ol.style.Icon({
+              anchor: [0.5, 0.9], 
+              anchorXUnits: 'fraction',
+              anchorYUnits: 'fraction',
+              src: 'https://i.imgur.com/JB6ZaAe.png',
+              scale: 0.3,
+            }),
+          });
 
-        const newFeature = new ol.Feature({
-          geometry: new ol.geom.Point(pointCoord),
-        });
-        
-        const newIcon = new ol.style.Style({
-          geometry: new ol.geom.Point(ol.proj.fromLonLat(pointCoord)),
-          image: new ol.style.Icon({
-            anchor: [0.5, 0.9], 
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'fraction',
-            src: 'https://i.imgur.com/JB6ZaAe.png',
-            scale: 0.3,
-          }),
-        });
-
-        newFeature.setStyle(newIcon)
-        features.push(newFeature)
+          newFeature.setStyle(newIcon)
+          features.push(newFeature)
+        }
       }
 
       console.log("Features", features)
