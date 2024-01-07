@@ -169,6 +169,26 @@ const html = todos => `<!DOCTYPE html>
 
     </div>
   </body>
+    
+  <!-- https://flowbite.com/docs/components/footer/ -->
+  <footer class="bottom-0 left-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+    <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 Munch. Email questions to <b>munchrit@gmail.com</b>
+    </span>
+    <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+        <li>
+            <a href="#" class="hover:underline me-4 md:me-6">About</a>
+        </li>
+        <li>
+            <p>&nbsp;|&nbsp;<a href="#" class="hover:underline me-4 md:me-6">Privacy Policy</a></p>
+        </li>
+        <li>
+            <p>&nbsp;|&nbsp;<a href="#" class="hover:underline me-4 md:me-6">Licensing</a></p>
+        </li>
+        <li>
+            <p>&nbsp;|&nbsp;<a href="mailto: munchrit@gmail.com" class="hover:underline">Contact</a></p>
+        </li>
+    </ul>
+</footer>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
@@ -525,11 +545,11 @@ const html = todos => `<!DOCTYPE html>
       "AUG August Center": [43.08417929383888, -77.67212814056265],
       "BHA Frances Baker Hall A": [43.08408914897436, -77.66943073414521],
       "BHB Frances Baker Hall B": [43.084081447762095, -77.66866098416261],
-      "BLC Bausch & Lomb Center": [0,0],
-      "BOO James E. Booth Hall": [0,0],
-      "BRN Brown Hall": [0,0],
+      "BLC Bausch & Lomb Center": [43.086024045600404, -77.67542248857849],
+      "BOO James E. Booth Hall": [43.084961253106776, -77.67717308064377],
+      "BRN Brown Hall": [43.081955901817594, -77.67843045335812],
       "CAR Chester F. Carlson Center for Imaging Science": [43.085904342527634, -77.67767046096698],
-      "CBT Center for Bioscience Education & Technology": [0,0],
+      "CBT Center for Bioscience Education & Technology": [43.08561689994638, -77.6785541406307],
       "CGH Carlton Gibson Hall": [43.08572044084291, -77.6677090445869],
       "CHA Eugene Colby Hall A": [0,0],
       "CHB Eugene Colby Hall B": [0,0],
@@ -537,66 +557,66 @@ const html = todos => `<!DOCTYPE html>
       "CHD Eugene Colby Hall D": [0,0],
       "CHE Eugene Colby Hall E": [0,0],
       "CHF Eugene Colby Hall (F)": [0,0],
-      "CLK George H. Clark Gymnasium": [0,0],
-      "COL Munsell Color Science Laboratory": [0,0],
-      "CPC Campus Center": [0,0],
-      "CRS Crossroads": [0,0],
-      "CSD Student Development Center": [0,0],
-      "CYB Cybersecurity Hall": [0,0],
-      "DSP Fredericka Douglass Sprague Perry Hall": [0,0],
-      "EAS George Eastman Hall": [0,0],
-      "ENG Engineering Hall": [0,0],
-      "ENT Engineering Technology Hall": [0,0],
+      "CLK George H. Clark Gymnasium": [43.08458099105695, -77.67390470060036],
+      "COL Munsell Color Science Laboratory": [43.08241149888393, -77.67891166721117],
+      "CPC Campus Center": [43.0841147612565, -77.67386807083561],
+      "CRS Crossroads": [43.08257690935789, -77.68014265587533],
+      "CSD Student Development Center": [43.087137194230024, -77.66831800733759],
+      "CYB Cybersecurity Hall": [43.08389120087585, -77.68063985857214],
+      "DSP Fredericka Douglass Sprague Perry Hall": [43.0849309621486, -77.66753553823415],
+      "EAS George Eastman Hall": [43.08472979548091, -77.67533437279671],
+      "ENG Engineering Hall": [43.08444322336611, -77.67902591177617],
+      "ENT Engineering Technology Hall": [43.0850318764658, -77.68032773318922],
       "FHA Helen Fish Hall (A)": [0,0],
       "FHB Helen Fish Hall B": [0,0],
       "FHC Helen Fish Hall C": [0,0],
       "FMS Facilities Management Services": [0,0],
       "FNK 40 Franklin Street": [0,0],
-      "GAN Frank E. Gannett Hall": [0,0],
+      "GAN Frank E. Gannett Hall": [43.08527049805491, -77.67629104238274],
       "GHA Greek House A - Zeta Tau Alpha": [0,0],
       "GHB Greek House B - Delta Phi Epsilon": [0,0],
       "GHC Greek House C - Alpha Sigma Alpha": [0,0],
       "GHD Greek House D - Phi Kappa Psi": [0,0],
       "GHE Greek House E - Alpha Xi Delta": [0,0],
       "GHF Greek House F - Pi Kappa Phi": [0,0],
-      "GLE James E. Gleason Hall": [0,0],
+      "GLE James E. Gleason Hall": [43.08423270156981, -77.6779138669747],
       "GOB Gosnell Boathouse": [0,0],
-      "GOL Golisano Hall": [0,0],
+      "GOL Golisano Hall": [43.08450625401825, -77.67992385934494],
       "GOR Gordon Field House & Activities Center": [43.085082087108894, -77.67226754316222],
-      "GOS Thomas Gosnell Hall": [0,0],
+      "GOS Thomas Gosnell Hall": [43.083661293930064, -77.6772606873489],
       "GVC Global Village Way C": [0,0],
       "GVD Global Village Way D": [0,0],
       "GVE Global Village Way E": [0,0],
       "GVP Global Village Plaza": [0,0],
       "GWH Grace Watson Hall": [43.08366074828328, -77.66912721850348],
       "HAC Hale-Andrews Student Life Center": [43.08455245869932, -77.67222248855687],
-      "HLC Hugh L. Carey Hall": [0,0],
+      "HLC Hugh L. Carey Hall": [43.08272602758297, -77.67885114501152],
       "ICC RIT Inn & Conference Center": [0,0],
       "INS Institute Hall": [0,0],
       "JEF 175 Jefferson Road": [0,0],
       "KGH Kate Gleason Hall": [43.08435368710708, -77.66809233696328],
       "LAC Laboratory for Applied Computing": [0,0],
-      "LBJ Lyndon Baines Johnson Hall": [0,0],
-      "LBR Liberal Arts Hall": [0,0],
+      "LBJ Lyndon Baines Johnson Hall": [43.08739963372037, -77.66835821661624],
+      "LBR Liberal Arts Hall": [43.08442965799544, -77.67640699646026],
       "LEL Leenhouts Lodge at the Tait Preserve": [0,0],
       "LH Liberty Hill": [0,0],
       "LOB Joseph M. Lobozzo Alumni House": [0,0],
-      "LOW Max Lowenthal Hall": [0,0],
-      "MEH Mark Ellingson Hall": [0,0],
-      "MON Monroe Hall": [0,0],
+      "LOW Max Lowenthal Hall": [43.08297728935863, -77.67726424176936],
+      "MEH Mark Ellingson Hall": [43.08627831786393, -77.66797130584808],
+      "MON Monroe Hall": [43.0839988490521, -77.67516010847032],
       "MPT Music Performance Theater": [0,0],
-      "MSS MAGIC Spell Studios": [0,0],
+      "MSS MAGIC Spell Studios": [43.085677740281525, -77.67635941153638],
       "OBS Observatory House": [0,0],
-      "ORN Orange Hall": [0,0],
-      "PGA Perkins Green Apartments": [0,0],
-      "POL Gene Polisseni Center": [0,0],
+      "ORN Orange Hall": [43.08364669299646, -77.67882279549772],
+      "PGA Perkins Green Apartments": [43.08580024957757, -77.66033842093185],
+      "POL Gene Polisseni Center": [43.08269908992204, -77.67464244362714],
       "PPD 100 Park Point Drive": [0,0],
       "PTH Peter Peterson Hall": [43.08601041501198, -77.66855244166551],
-      "RED Red Barn": [0,0],
+      "RED Red Barn": [43.084373186017984, -77.68473958570127],
       "RHA Residence Hall A": [43.08423479373873, -77.66979005180497],
       "RHB Residence Hall B": [43.08465476322702, -77.6694394257646],
       "RHC Residence Hall C": [43.08517221242193, -77.66946288690295],
-      "RHD Residence Hall D": [0,0],
+      "RHD Residence Hall D": [43.085831934990026, -77.66899803126843],
       "RIA Frank Ritter Ice Arena": [0,0],
       "RKA Riverknoll Apartments": [0,0],
       "ROS Lewis P. Ross Hall": [0,0],
