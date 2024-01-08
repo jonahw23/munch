@@ -28,6 +28,11 @@ const html = todos => `<!DOCTYPE html>
         height: 40vh; 
         width: 100%; 
       }
+
+      .locate {
+        top: 4em;
+        left: .5em;
+      }
     </style>
 
     <!-- Map-related files -->
@@ -730,7 +735,7 @@ const html = todos => `<!DOCTYPE html>
         }
       }
 
-      console.log("Features", features)
+      // console.log("Features", features)
 
       const icons = new ol.source.Vector({})
       icons.addFeatures(features)
@@ -744,6 +749,68 @@ const html = todos => `<!DOCTYPE html>
     }
 
     loadPins()
+
+    const geolocation = new ol.Geolocation({
+      // enableHighAccuracy must be set to true to have the heading value.
+      tracking: true,
+      trackingOptions: {
+        enableHighAccuracy: true,
+      },
+      projection: map.displayProjection,
+    });
+    
+    // handle geolocation error.
+    geolocation.on('error', function (error) {
+      console.log("Geolocation error", error)
+    });
+    
+    const accuracyFeature = new ol.Feature();
+
+    geolocation.on('change:accuracyGeometry', function () {
+      accuracyFeature.setGeometry(geolocation.getAccuracyGeometry().transform('EPSG:4326', 'EPSG:3857'));
+    });
+    
+    const positionFeature = new ol.Feature();
+    positionFeature.setStyle(
+      new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 6,
+          fill: new ol.style.Fill({
+            color: '#3399CC',
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#fff',
+            width: 2,
+          }),
+        }),
+      })
+    );
+    
+    geolocation.on('change:position', function () {
+      const coordinates = geolocation.getPosition();
+      positionFeature.setGeometry(coordinates ? new ol.geom.Point(ol.proj.fromLonLat(coordinates)) : null);
+    });
+
+    var locationLayer = new ol.layer.Vector({
+      source: new ol.source.Vector({
+        features: [positionFeature, accuracyFeature]
+      }),
+    })
+
+    map.addLayer(locationLayer)
+
+    const locate = document.createElement('div');
+    locate.className = 'ol-control ol-unselectable locate';
+    locate.innerHTML = '<button title="Home">◎</button>';
+    // ◎🏠
+    locate.addEventListener('click', function () {
+      CenterMap(-77.6765, 43.0828)
+    });
+    map.addControl(
+      new ol.control.Control({
+        element: locate,
+      })
+    );
 
     // End map code
 
