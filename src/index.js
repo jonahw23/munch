@@ -154,6 +154,11 @@ const html = todos => `<!DOCTYPE html>
               <div class="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex flex-wrap">
                 <input id="hourInput" placeholder=" Approx Hours Left" type="number" min="0" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
                 <input id="minInput" placeholder=" Approx Minutes Left" type="number" min="0" class="hidden bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></input>
+                
+                <div class="hidden ms-2 mb-2 text-xs font-medium text-gray-900 w-full dark:text-gray-300">Event Specifications</div>
+                <div id="eventSpecs" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 pb-0 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            
+                </div>
               </div>
             </div>
 
@@ -646,6 +651,8 @@ const html = todos => `<!DOCTYPE html>
 
     const foods = ["Candy", "Snacks", "Pizza", "Desserts"]
 
+    const specs = ["Honors Program", "Accelerated Bachelors/Masters Program", "Major", "Club/Sport"]
+
     function addUpVote(i) {
       window.todos[i].upvotes += 1
       updateTodos()
@@ -707,6 +714,22 @@ const html = todos => `<!DOCTYPE html>
     //   console.log(coordinate)
     // });
 
+    const getColorSpecs = (vals) => {
+      const red = "rgba(245, 5, 25, 0.8)"
+      const yellow = "rgba(245, 219, 25, 0.8)"
+      const green = "rgba(28, 166, 44, 0.79)"
+      const blue = "rgba(23, 70, 199, 0.79)"
+      const orange = "rgba(228, 106, 0, 0.79)"
+      const purple = "rgba(88, 46, 169, 0.79)"
+      const colors = [blue, green, purple, orange]
+      for(let i = 0; i < specs.length; i++){
+        if(vals.includes(specs[i])){
+          return colors[i]
+        }
+      }
+      return red
+    }
+
     const loadPins = () => {
       var features = []
 
@@ -722,10 +745,11 @@ const html = todos => `<!DOCTYPE html>
           const newIcon = new ol.style.Style({
             geometry: new ol.geom.Point(ol.proj.fromLonLat(pointCoord)),
             image: new ol.style.Icon({
-              anchor: [0.5, 0.9], 
+              color: getColorSpecs(todos[i].specs ? todos[i].specs : []),
+              anchor: [0.5, 1], 
               anchorXUnits: 'fraction',
               anchorYUnits: 'fraction',
-              src: 'https://i.imgur.com/JB6ZaAe.png',
+              src: 'https://i.imgur.com/ppzzgMz.png',
               scale: 0.3,
             }),
           });
@@ -801,8 +825,8 @@ const html = todos => `<!DOCTYPE html>
 
     const locate = document.createElement('div');
     locate.className = 'ol-control ol-unselectable locate';
-    locate.innerHTML = '<button title="Home">◎</button>';
-    // ◎🏠
+    locate.innerHTML = '<button title="Home">⧈</button>';
+    // ◎🏠⌂⧈
     locate.addEventListener('click', function () {
       CenterMap(-77.6765, 43.0828)
     });
@@ -943,7 +967,7 @@ const html = todos => `<!DOCTYPE html>
         var foodWrap = document.createElement("div")
         foodWrap.setAttribute("Class", "flex items-center mb-4")
 
-        console.log(foods[i])
+        //console.log(foods[i])
 
         foodAdd.setAttribute("type", "checkbox")
         foodAdd.setAttribute("id", "default-checkbox")
@@ -990,6 +1014,65 @@ const html = todos => `<!DOCTYPE html>
       otherWrap.appendChild(other)
 
       foodContainer.appendChild(otherWrap)
+    }
+
+    var fillSpecs = function(){
+      var specContainer = document.querySelector("#eventSpecs")
+      specContainer.innerHTML = null
+
+      var title = document.createElement("div")
+      title.innerText = "Program-exclusive event? If so, click all that apply."
+      title.setAttribute("Class", "ms-2 mb-5 text-xs font-medium text-gray-900 dark:text-gray-300")
+      specContainer.appendChild(title)
+      
+      for(let i = 0; i < specs.length; i++){
+        var specAdd = document.createElement("input")
+        var specLabel = document.createElement("label")
+        var specWrap = document.createElement("div")
+        specWrap.setAttribute("Class", "flex items-center mb-4")
+
+        console.log(specs[i])
+
+        specAdd.setAttribute("type", "checkbox")
+        specAdd.setAttribute("id", "default-checkbox")
+        specAdd.setAttribute("Value", specs[i])
+        specAdd.setAttribute("Class", "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600")
+
+
+        specLabel.setAttribute("For", specAdd)
+        specLabel.setAttribute("Class", "ms-2 text-sm font-medium text-gray-900 dark:text-gray-300")
+        specLabel.setAttribute("Value",  specs[i])
+        specLabel.innerText = '\xa0' + specs[i] 
+
+        specWrap.appendChild(specAdd)
+        specWrap.appendChild(specLabel)
+
+        specContainer.appendChild(specWrap)
+      }
+
+      var otherBox = document.createElement("input")
+      var other = document.createElement("input")
+      var otherWrap = document.createElement("div")
+      otherWrap.setAttribute("Class", "flex items-center mb-4")
+
+      otherBox.setAttribute("type", "checkbox")
+      otherBox.setAttribute("id", "default-checkbox")
+      otherBox.setAttribute("Value", "otherCheckBox")
+      otherBox.setAttribute("Class", "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600")
+
+      other.setAttribute("type", "text")
+      other.setAttribute("For", otherBox)
+      other.setAttribute("Class", "bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+      other.setAttribute("placeholder", "Other")
+      other.setAttribute("id", "otherTextBox")
+      //console.log(other)
+
+      //console.log(otherBox)
+
+      otherWrap.appendChild(otherBox)
+      otherWrap.appendChild(other)
+
+      specContainer.appendChild(otherWrap)
     }
 
     var populateTodos = function() {
@@ -1177,8 +1260,9 @@ const html = todos => `<!DOCTYPE html>
     populateTodos()
     fillBuildings()
     fillFoods()
+    fillSpecs()
 
-    var getChecked = function() {
+    var getCheckedFoods = function() {
       var returns = []
       for(let i = 0; i < foods.length; i++){
         var box = document.querySelector("input[value=" + CSS.escape(foods[i]) + "]")
@@ -1198,10 +1282,31 @@ const html = todos => `<!DOCTYPE html>
       return returns
     }
 
+    var getCheckedSpecs = function() {
+      var returns = []
+      for(let i = 0; i < specs.length; i++){
+        var box = document.querySelector("input[value=" + CSS.escape(specs[i]) + "]")
+        //console.log(box.checked)
+        if(box.checked){
+          box.checked = false;
+          returns.push(specs[i])
+        }
+      }
+      var otherBox = document.querySelector("input[id=otherTextBox]")
+      var otherCheck = document.querySelector("input[value=otherCheckBox]") 
+      if(otherBox.value != null && otherCheck.checked){
+        returns.push(otherBox.value)
+        otherBox.value = null
+        otherCheck.checked = false
+      }
+      return returns
+    }
+
     var createTodo = function() {
       //submit
       
-      var foodOptions = getChecked()
+      var foodOptions = getCheckedFoods()
+      var specOptions = getCheckedSpecs()
       var event = document.querySelector("select[id=eventType]") // This name is the name of the element -->
       var location = document.querySelector("select[id=eventLocation]") // This name is the name of the element -->
       var input = document.querySelector("#locationInput")
@@ -1235,7 +1340,7 @@ const html = todos => `<!DOCTYPE html>
         var description = event.value + " at " + locationVal
         var randTrack = Math.random() * 100000000000000000
         console.log(randTrack)
-        window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, hours: timeUp, upvotes: 1, completed: false })
+        window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, completed: false })
         event.value = "Event Type"
         location.value = "Location"
         roomNum.value = ""
