@@ -165,7 +165,7 @@ const html = todos => `<!DOCTYPE html>
             <div id="foodType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
               
             </div>
-          
+            <div id="formError" class="hidden ms-2 mt-4 text-xs font-medium text-red-400 w-full dark:text-gray-300">Please fill out all above forms</div>
           <button class="createbutton text-white font-bold mt-5 py-2 px-4 rounded focus:outline-none focus:shadow-outline" id="create" type="submit">Submit</button>
         </div>
 
@@ -653,6 +653,8 @@ const html = todos => `<!DOCTYPE html>
 
     const specs = ["Honors Program", "Accelerated Bachelors/Masters Program", "Major", "Club/Sport"]
 
+    const trackToCount = {} // keep track of which tracking nums go to which count
+
     function addUpVote(i) {
       window.todos[i].upvotes += 1
       updateTodos()
@@ -755,6 +757,7 @@ const html = todos => `<!DOCTYPE html>
           });
 
           newFeature.setStyle(newIcon)
+          newFeature.event = todos[i] // store the event in the feature
           features.push(newFeature)
         }
       }
@@ -836,6 +839,16 @@ const html = todos => `<!DOCTYPE html>
       })
     );
 
+    map.on('click', function (evt) {
+      const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+        //check if only one feature was clicked and it has an event
+        if(feature.event){
+          showEvent(feature.event.track)
+        }
+        console.log("feature event clicked", feature.event)
+      });
+    });
+
     // End map code
 
     var updateTodos = function() {
@@ -864,6 +877,28 @@ const html = todos => `<!DOCTYPE html>
       for(let i = 0; i < inners.length; i++){
           if(inners[i].id == target){
             inners[i].setAttribute("class", accordianBaseText)
+          }
+          else{
+            inners[i].setAttribute("class", "hidden" + accordianBaseText)
+          }
+      }
+    }
+
+    var showEvent = function( tracking ) {
+      //console.log(trackToCount)
+      var target = trackToCount[tracking]
+      var inners = document.getElementsByClassName("accordionText")
+      var outers = document.getElementsByClassName("nameBlock")
+
+      for(let i = 0; i < inners.length; i++){
+          if(inners[i].id == target){
+            inners[i].setAttribute("class", accordianBaseText)
+
+            // scroll to the clicked feature
+            const yOffset = -20; 
+            const element = outers[i]
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({top: y, behavior: 'smooth'});
           }
           else{
             inners[i].setAttribute("class", "hidden" + accordianBaseText)
@@ -1082,6 +1117,8 @@ const html = todos => `<!DOCTYPE html>
       var count = 0;
 
       window.todos.forEach(todo => {
+        trackToCount[todo.track] = count
+
         // display
         var el = document.createElement("button")
         el.className = "border-t py-4"
@@ -1201,6 +1238,7 @@ const html = todos => `<!DOCTYPE html>
         var foodOptions = todo.foods
         var newLine = \`
         \`
+      
         if(foodOptions == null){
           foodOptions = []
         }
@@ -1335,6 +1373,8 @@ const html = todos => `<!DOCTYPE html>
 
       //console.log(isOutside)
       if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null) {
+        var error = document.querySelector("#formError")
+        error.classList.add("hidden")
         console.log(event.value)
         console.log(locationVal)
         var description = event.value + " at " + locationVal
@@ -1349,6 +1389,16 @@ const html = todos => `<!DOCTYPE html>
         checkOutside()
         updateTodos()
         loadPins()
+      }
+      else{
+        var error = document.querySelector("#formError")
+        error.classList.remove("hidden")
+        if(event.value === "Event Type" || event.value === null){
+          error.innerText = "Please select an event type"
+        }
+        else if(locationVal === "Location" || locationVal === null){
+          error.innerText = "Please select a location for the event"
+        }
       }
     }
 
