@@ -1,6 +1,6 @@
 // Inspired by https://blog.cloudflare.com/building-a-to-do-list-with-workers-and-kv/
 
-const html = todos => `<!DOCTYPE html>
+const html = todos => /*html*/ `<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
@@ -1805,6 +1805,8 @@ const html = todos => `<!DOCTYPE html>
     document.querySelector("#create").addEventListener('click', createTodo)
   </script>
 </html>`
+
+// END THE HTML
 
 const defaultData = { todos: [], track : 0 }
 
