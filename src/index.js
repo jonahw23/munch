@@ -106,6 +106,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             <ul class="hidden py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="avatarButton">
             </ul>
             <div class="py-1">
+              <button id="userPageButton" class="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">About me</button>
               <button id="signOutButton" class="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</button>
             </div>
         </div>
@@ -118,7 +119,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     </header>
 
   <body class="bg-blue-100" style="height: 100vh">
-    <div class="w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
+    <div id="mainPage" class="w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
       <div class="bg-white h-full shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Submit a New Food Event!</h1>
         <div class="flex" style="flex-direction:column">
@@ -438,7 +439,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         }
       }, error => {
         console.log("error")
-      });
+    });
     
   const buildings = [
     "Not Listed",
@@ -1064,8 +1065,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
     const getColorSpecs = (vals) => {
       const red = "rgba(245, 5, 25, 0.8)"
-      const yellow = "rgba(245, 219, 25, 0.8)"
-      const green = "rgba(28, 166, 44, 0.79)"
+      const yellow = "rgba(227, 167, 0, 0.8)"
+      const green = "rgba(51, 102, 0, 0.8)"
       const blue = "rgba(23, 70, 199, 0.79)"
       const orange = "rgba(228, 106, 0, 0.79)"
       const purple = "rgba(88, 46, 169, 0.79)"
@@ -1835,9 +1836,21 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           error.innerText = "Please select an option for the event specification"
         }
       }
-    }
+    } // end createTodo
 
     document.querySelector("#create").addEventListener('click', createTodo)
+
+    // Begin mePage code
+    var switchPage = function() {
+      var mainPage = document.querySelector("#mainPage")
+      if(mainPage.classList.contains("hidden")){
+        mainPage.classList.remove("hidden")
+      }
+      else{
+        mainPage.classList.add("hidden")
+      }
+    }
+    document.querySelector("#userPageButton").addEventListener("click", switchPage)
   </script>
 </html>`
 
