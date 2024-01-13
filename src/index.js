@@ -651,7 +651,353 @@ const html = todos => `<!DOCTYPE html>
 
     const foods = ["Candy", "Snacks", "Pizza", "Desserts"]
 
-    const specs = ["Honors Program", "Accelerated Bachelors/Masters Program", "Major", "Club/Sport"]
+    const specs = ["Honors Program", "Accelerated Bachelors/Masters Program", "Major-Specific", "College-Specific"]
+
+    const colleges = [
+      "College of Art and Design",
+      "Saunders College of Business", 
+      "Golisano College of Computing and Information Sciences",
+      "Kate Gleason College of Engineering",
+      "College of Engineering Technology",
+      "College of Health Sciences and Technology",
+      "College of Liberal Arts",
+      "National Technical Institute for the Deaf",
+      "College of Science",
+    ]
+
+    const collegeMajors = {
+      "College of Art and Design" : [
+        "Advertising Photography Option - Photographic and Imaging Arts BFA",
+        "Animation Option - Film and Animation BFA",
+        "Art Exploration",
+        "Ceramics Option - Studio Arts BFA",
+        "3D Digital Design BFA",
+        "Expanded Forms Option - Studio Arts BFA",
+        "Film and Animation BFA",
+        "Fine Art Photography Option - Photographic and Imaging Arts BFA",
+        "Furniture Design AOS",
+        "Furniture Design Option - Studio Arts BFA",
+        "Game Arts Option - 3D Digital Design BFA",
+        "Glass Option - Studio Arts BFA",
+        "Graphic Design BFA",
+        "Humanities, Computing, and Design BS",
+        "Illustration BFA",
+        "Industrial Design BFA",
+        "Interior Design BFA",
+        "Medical Illustration BFA",
+        "Metals and Jewelry Design Option - Studio Arts BFA",
+        "Motion Picture Science BS",
+        "New Media Design BFA",
+        "Painting Option - Studio Arts BFA",
+        "Photographic Arts and Sciences Exploration",
+        "Photographic and Imaging Arts BFA",
+        "Photographic Sciences BS",
+        "Photojournalism Option - Photographic and Imaging Arts BFA",
+        "Printmaking Option - Studio Arts BFA",
+        "Production Option - Film and Animation BFA",
+        "Sculpture Option - Studio Arts BFA",
+        "Studio Arts BFA",
+        "Visual Media Option - Photographic and Imaging Arts BFA",
+        "3D Visualization Option - 3D Digital Design BFA",
+      ],
+      "Saunders College of Business" : [
+        "Accounting BS",
+        "Business Exploration",
+        "Finance BS",
+        "Global Business Management BS",
+        "Hospitality and Tourism Management BS",
+        "Management Information Systems (MIS) BS",
+        "Marketing BS",
+        "Supply Chain Management BS",
+      ],
+      "Golisano College of Computing and Information Sciences" : [
+        "Computing Exploration",
+        "Computing and Information Technologies BS",
+        "Computer Science BS",
+        "Cybersecurity BS",
+        "Game Design and Development BS",
+        "Humanities, Computing, and Design BS",
+        "Human-Centered Computing BS",
+        "New Media Interactive Development BS",
+        "Software Engineering BS",
+        "Web and Mobile Computing BS",
+      ],
+      "Kate Gleason College of Engineering" : [
+        "Aerospace Engineering Option - Mechanical Engineering BS",
+        "Artificial Intelligence Option - Electrical Engineering BS",
+        "Automotive Engineering Option - Mechanical Engineering BS",
+        "Bioengineering Option - Mechanical Engineering BS",
+        "Biomedical Engineering BS",
+        "Chemical Engineering BS",
+        "Clean and Renewable Energy Option - Electrical Engineering BS",
+        "Computer Engineering BS",
+        "Computer Engineering Option - Electrical Engineering BS",
+        "Energy and the Environment Option - Mechanical Engineering BS",
+        "Engineering Exploration",
+        "Industrial Engineering BS",
+        "Integrated Electronics Certificate",
+        "Mechanical Engineering BS",
+        "Microelectronic Engineering BS",
+        "Robotics Option - Electrical Engineering BS",
+      ],
+      "College of Engineering Technology" : [
+        "Civil Engineering Technology BS",
+        "Computer Engineering Technology BS",
+        "Electrical Engineering Technology BS",
+        "Engineering Technology Exploration",
+        "Environmental Sustainability, Health and Safety BS",
+        "Mechanical Engineering Technology BS",
+        "Mechatronics Engineering Technology BS",
+        "Packaging Science BS",
+        "Print and Graphic Media Technology BS",
+        "Product Design Option - Mechanical Engineering Technology BS",
+        "Robotics and Automation Option - Mechanical Engineering Technology BS",
+        "Robotics and Manufacturing Engineering Technology BS",
+      ],
+      "College of Health Sciences and Technology" : [
+        "Biomedical Sciences BS",
+        "Diagnostic Medical Sonography (Ultrasound) Certificate",
+        "Diagnostic Medical Sonography (Ultrasound) BS",
+        "Echocardiography (Cardiac Ultrasound) Certificate",
+        "Exercise Science BS",
+        "Exercise Science Certificate",
+        "Global Public Health BS",
+        "Health Systems Administration Certificate",
+        "Nutritional Sciences BS",
+        "Physician Assistant BS/MS",
+        "Pre-Vet",
+      ],
+      "College of Liberal Arts" : [
+        "Advertising and Public Relations BS",
+        "Applied Modern Language and Culture BS",
+        "Chinese Option - Applied Modern Language and Culture BS",
+        "Communication BS",
+        "Criminal Justice BS",
+        "Economics BS",
+        "English BS",
+        "French Option - Applied Modern Language and Culture BS",
+        "History BS",
+        "Humanities, Computing, and Design BS",
+        "International and Global Studies BS",
+        "Japanese Option - Applied Modern Language and Culture BS",
+        "Journalism BS",
+        "Liberal Arts Exploration",
+        "Museum Studies BS",
+        "Neuroscience BS",
+        "Philosophy BS",
+        "Political Science BS",
+        "Pre-Law",
+        "Psychology BS",
+        "Sociology and Anthropology BS",
+        "Spanish Option - Applied Modern Language and Culture BS",
+        "Women's, Gender, and Sexuality Studies BS",
+      ],
+      "National Technical Institute for the Deaf" : [
+        "Accounting Technology AAS",
+        "Administrative Support Technology AAS",
+        "Applied Computer Technology AS",
+        "Applied Computer Technology AAS",
+        "Applied Computer Technology AOS",
+        "Applied Liberal Arts AS",
+        "Applied Mechanical Technology AAS",
+        "Architectural and Civil Drafting Technology AAS",
+        "Architectural and Civil Drafting Technology AOS",
+        "ASL-English Interpretation BS",
+        "Business AS",
+        "Business Administration AAS",
+        "Business Technology AOS",
+        "Career Exploration Studies",
+        "Career Foundation",
+        "Civil Technology AAS",
+        "Community Development and Inclusive Leadership BS",
+        "Deaf Cultural Studies-American Sign Language Certificate",
+        "Design and Imaging Technology AAS",
+        "Design and Imaging Technology AOS",
+        "General Science AS",
+        "3D Graphics Technology AAS",
+        "Laboratory Science Technology AAS",
+        "Laboratory Science Technology AOS",
+        "Mobile Application Development AAS",
+        "Performing Arts Certificate",
+        "Pre-Baccalaureate Studies in Engineering",
+        "Pre-Baccalaureate Studies in Liberal Studies",
+        "Pre-Baccalaureate Studies in Science and Mathematics",
+        "Pre-Baccalaureate Studies in Visual Communications",
+        "Precision Manufacturing Technology AOS",
+      ],
+      "College of Science" : [
+        "Applied Mathematics BS",
+        "Applied Statistics and Data Analytics BS",
+        "Biochemistry BS",
+        "Bioinformatics and Computational Biology BS",
+        "Biology BS",
+        "Biotechnology and Molecular Bioscience BS",
+        "Chemistry BS",
+        "Computational Mathematics BS",
+        "Environmental Science BS",
+        "Imaging Science BS",
+        "Neuroscience BS",
+        "Physics BS",
+        "Pre-Med",
+        "Pre-Vet",
+      ],
+    }
+
+    const majors = [
+      "3D Digital Design BFA",
+      "3D Graphics Technology AAS",
+      "3D Visualization Option - 3D Digital Design BFA",
+      "ASL-English Interpretation BS",
+      "Accounting BS",
+      "Accounting Technology AAS",
+      "Administrative Support Technology AAS",
+      "Advertising Photography Option - Photographic and Imaging Arts BFA",
+      "Advertising and Public Relations BS",
+      "Aerospace Engineering Option - Mechanical Engineering BS",
+      "Animation Option - Film and Animation BFA",
+      "Applied Computer Technology AAS",
+      "Applied Computer Technology AOS",
+      "Applied Computer Technology AS",
+      "Applied Liberal Arts AS",
+      "Applied Mathematics BS",
+      "Applied Mechanical Technology AAS",
+      "Applied Modern Language and Culture BS",
+      "Applied Statistics and Data Analytics BS",
+      "Architectural and Civil Drafting Technology AAS",
+      "Architectural and Civil Drafting Technology AOS",
+      "Art Exploration",
+      "Artificial Intelligence Option - Electrical Engineering BS",
+      "Automotive Engineering Option - Mechanical Engineering BS",
+      "Biochemistry BS",
+      "Bioengineering Option - Mechanical Engineering BS",
+      "Bioinformatics and Computational Biology BS",
+      "Biology BS",
+      "Biomedical Engineering BS",
+      "Biomedical Sciences BS",
+      "Biotechnology and Molecular Bioscience BS",
+      "Business AS",
+      "Business Administration AAS",
+      "Business Exploration",
+      "Business Technology AOS",
+      "Career Exploration Studies",
+      "Career Foundation",
+      "Ceramics Option - Studio Arts BFA",
+      "Chemical Engineering BS",
+      "Chemistry BS",
+      "Chinese Option - Applied Modern Language and Culture BS",
+      "Civil Engineering Technology BS",
+      "Civil Technology AAS",
+      "Clean and Renewable Energy Option - Electrical Engineering BS",
+      "Communication BS",
+      "Community Development and Inclusive Leadership BS",
+      "Computational Mathematics BS",
+      "Computer Engineering BS",
+      "Computer Engineering Option - Electrical Engineering BS",
+      "Computer Engineering Technology BS",
+      "Computer Science BS",
+      "Computing Exploration",
+      "Computing and Information Technologies BS",
+      "Criminal Justice BS",
+      "Cybersecurity BS",
+      "Deaf Cultural Studies-American Sign Language Certificate",
+      "Design and Imaging Technology AAS",
+      "Design and Imaging Technology AOS",
+      "Diagnostic Medical Sonography (Ultrasound) BS",
+      "Diagnostic Medical Sonography (Ultrasound) Certificate",
+      "Echocardiography (Cardiac Ultrasound) Certificate",
+      "Economics BS",
+      "Electrical Engineering Technology BS",
+      "Energy and the Environment Option - Mechanical Engineering BS",
+      "Engineering Exploration",
+      "Engineering Technology Exploration",
+      "English BS",
+      "Environmental Science BS",
+      "Environmental Sustainability, Health and Safety BS",
+      "Exercise Science BS",
+      "Exercise Science Certificate",
+      "Expanded Forms Option - Studio Arts BFA",
+      "Film and Animation BFA",
+      "Finance BS",
+      "Fine Art Photography Option - Photographic and Imaging Arts BFA",
+      "French Option - Applied Modern Language and Culture BS",
+      "Furniture Design AOS",
+      "Furniture Design Option - Studio Arts BFA",
+      "Game Arts Option - 3D Digital Design BFA",
+      "Game Design and Development BS",
+      "General Science AS",
+      "Glass Option - Studio Arts BFA",
+      "Global Business Management BS",
+      "Global Public Health BS",
+      "Graphic Design BFA",
+      "Health Systems Administration Certificate",
+      "History BS",
+      "Hospitality and Tourism Management BS",
+      "Human-Centered Computing BS",
+      "Humanities, Computing, and Design BS",
+      "Illustration BFA",
+      "Imaging Science BS",
+      "Industrial Design BFA",
+      "Industrial Engineering BS",
+      "Integrated Electronics Certificate",
+      "Interior Design BFA",
+      "International and Global Studies BS",
+      "Japanese Option - Applied Modern Language and Culture BS",
+      "Journalism BS",
+      "Laboratory Science Technology AAS",
+      "Laboratory Science Technology AOS",
+      "Liberal Arts Exploration",
+      "Management Information Systems (MIS) BS",
+      "Marketing BS",
+      "Mechanical Engineering BS",
+      "Mechanical Engineering Technology BS",
+      "Mechatronics Engineering Technology BS",
+      "Medical Illustration BFA",
+      "Metals and Jewelry Design Option - Studio Arts BFA",
+      "Microelectronic Engineering BS",
+      "Mobile Application Development AAS",
+      "Motion Picture Science BS",
+      "Museum Studies BS",
+      "Neuroscience BS",
+      "New Media Design BFA",
+      "New Media Interactive Development BS",
+      "Nutritional Sciences BS",
+      "Packaging Science BS",
+      "Painting Option - Studio Arts BFA",
+      "Performing Arts Certificate",
+      "Philosophy BS",
+      "Photographic Arts and Sciences Exploration",
+      "Photographic Sciences BS",
+      "Photographic and Imaging Arts BFA",
+      "Photojournalism Option - Photographic and Imaging Arts BFA",
+      "Physician Assistant BS/MS",
+      "Physics BS",
+      "Political Science BS",
+      "Pre-Baccalaureate Studies in Engineering",
+      "Pre-Baccalaureate Studies in Liberal Studies",
+      "Pre-Baccalaureate Studies in Science and Mathematics",
+      "Pre-Baccalaureate Studies in Visual Communications",
+      "Pre-Law",
+      "Pre-Med",
+      "Pre-Vet",
+      "Precision Manufacturing Technology AOS",
+      "Print and Graphic Media Technology BS",
+      "Printmaking Option - Studio Arts BFA",
+      "Product Design Option - Mechanical Engineering Technology BS",
+      "Production Option - Film and Animation BFA",
+      "Psychology BS",
+      "Robotics Option - Electrical Engineering BS",
+      "Robotics and Automation Option - Mechanical Engineering Technology BS",
+      "Robotics and Manufacturing Engineering Technology BS",
+      "Sculpture Option - Studio Arts BFA",
+      "Sociology and Anthropology BS",
+      "Software Engineering BS",
+      "Spanish Option - Applied Modern Language and Culture BS",
+      "Studio Arts BFA",
+      "Supply Chain Management BS",
+      "Visual Media Option - Photographic and Imaging Arts BFA",
+      "Web and Mobile Computing BS",
+      "Women's, Gender, and Sexuality Studies BS",
+    ]
 
     const trackToCount = {} // keep track of which tracking nums go to which count
 
@@ -723,7 +1069,7 @@ const html = todos => `<!DOCTYPE html>
       const blue = "rgba(23, 70, 199, 0.79)"
       const orange = "rgba(228, 106, 0, 0.79)"
       const purple = "rgba(88, 46, 169, 0.79)"
-      const colors = [blue, green, purple, orange]
+      const colors = [blue, green, yellow, purple, orange]
       for(let i = 0; i < specs.length; i++){
         if(vals.includes(specs[i])){
           return colors[i]
@@ -1082,6 +1428,50 @@ const html = todos => `<!DOCTYPE html>
         specWrap.appendChild(specAdd)
         specWrap.appendChild(specLabel)
 
+        if(specs[i].includes("Major")){
+          var majorList = document.createElement("select")
+          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+          majorList.style.width = "300px"
+
+          //This is just the fillbuildings code, should be updated along with fillbuildings
+          majorList.innerHTML = null
+          var majorBox = document.createElement("option")
+          majorBox.innerText = "Select Major"
+          majorBox.setValue = "Select Major"
+          majorBox.setSelected = true
+          majorList.appendChild(majorBox)
+          for(let i = 0; i < majors.length; i++){
+            var majorAdd = document.createElement("option")
+            //console.log(majors[i])
+            majorAdd.innerText = majors[i]
+            majorAdd.setValue = majors[i]
+            majorList.appendChild(majorAdd)
+          }
+          specWrap.appendChild(majorList)
+        }
+
+        if(specs[i].includes("College")){
+          var majorList = document.createElement("select")
+          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+          majorList.style.width = "300px"
+
+          //This is just the fillbuildings code, should be updated along with fillbuildings
+          majorList.innerHTML = null
+          var majorBox = document.createElement("option")
+          majorBox.innerText = "Select College"
+          majorBox.setValue = "Select College"
+          majorBox.setSelected = true
+          majorList.appendChild(majorBox)
+          for(let i = 0; i < colleges.length; i++){
+            var majorAdd = document.createElement("option")
+            //console.log([i])
+            majorAdd.innerText = colleges[i]
+            majorAdd.setValue = colleges[i]
+            majorList.appendChild(majorAdd)
+          }
+          specWrap.appendChild(majorList)
+        }
+
         specContainer.appendChild(specWrap)
       }
 
@@ -1235,16 +1625,16 @@ const html = todos => `<!DOCTYPE html>
         inside.className = "hidden" + accordianBaseText
         inside.setAttribute("id", count)
         var text = document.createElement("paragraph")
+
         var foodOptions = todo.foods
-        var newLine = \`
-        \`
+        var newLine = "<br>"
       
         if(foodOptions == null){
           foodOptions = []
         }
 
-        text.innerText += "Location: " 
-        text.innerText += todo.outside ? todo.location + " (Outside)": todo.location + ", Room " + todo.room
+        text.innerHTML += "Location: " 
+        text.innerHTML += todo.outside ? todo.location + " (Outside)": todo.location + ", Room " + todo.room
 
         const d = new Date();
         var time = d.getTime();
@@ -1269,6 +1659,16 @@ const html = todos => `<!DOCTYPE html>
 
         text.innerHTML += newLine + timeContent
 
+        if(todo.specs && todo.specs.length > 0){
+          var specsText = newLine + "This event is restricted to students in the "
+          for(let i = 0; i < todo.specs.length; i++){
+            var boldPiece = document.createElement("span")
+            boldPiece.style = 'font-weight: bold'
+            boldPiece.innerHTML = specsText + todo.specs[i]
+            text.appendChild(boldPiece)
+          }
+        }
+
         var description = foodOptions.length > 0 ? "" : newLine + "No food type specified"
         if(foodOptions.length > 0){
           description += newLine + "Food types:"
@@ -1277,7 +1677,7 @@ const html = todos => `<!DOCTYPE html>
           } // This is how I have to do nextLine / newLine
         }
 
-        text.innerText += description
+        text.innerHTML += description
         text.setAttribute("class", "border-t-2 border-blue-900 w-full text-left")
         inside.appendChild(text)
 
