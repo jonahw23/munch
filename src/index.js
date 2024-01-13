@@ -1069,11 +1069,17 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       const blue = "rgba(23, 70, 199, 0.79)"
       const orange = "rgba(228, 106, 0, 0.79)"
       const purple = "rgba(88, 46, 169, 0.79)"
-      const colors = [blue, green, yellow, purple, orange]
+      const colors = [blue, green, purple, orange, yellow]
       for(let i = 0; i < specs.length; i++){
         if(vals.includes(specs[i])){
           return colors[i]
         }
+      }
+      if(majors.includes(vals[0])){ // majors means 2
+        return colors[2]
+      }
+      if(colleges.includes(vals[0])){ // colleges means 3
+        return colors[3]
       }
       return red
     }
@@ -1217,10 +1223,12 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
     var showInside = function(evt) {
       var outer = evt.currentTarget
+      var width = outer.offsetWidth
       var target = outer.dataset.count
       var inners = document.getElementsByClassName("accordionText")
 
       for(let i = 0; i < inners.length; i++){
+        inners[i].style = "max-width: " + width * 0.9 + "px" // cap the width of the inner text at 90% of the header
           if(inners[i].id == target){
             inners[i].setAttribute("class", accordianBaseText)
           }
@@ -1430,7 +1438,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         if(specs[i].includes("Major")){
           var majorList = document.createElement("select")
-          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+          majorList.setAttribute("id", "majorList")
+          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-64 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
           majorList.style.width = "300px"
 
           //This is just the fillbuildings code, should be updated along with fillbuildings
@@ -1452,7 +1461,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         if(specs[i].includes("College")){
           var majorList = document.createElement("select")
-          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+          majorList.setAttribute("id", "collegeList")
+          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-64 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
           majorList.style.width = "300px"
 
           //This is just the fillbuildings code, should be updated along with fillbuildings
@@ -1678,7 +1688,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         }
 
         text.innerHTML += description
-        text.setAttribute("class", "border-t-2 border-blue-900 w-full text-left")
+        text.setAttribute("class", "border-t-2 border-blue-900 text-left")
         inside.appendChild(text)
 
         var votes = document.createElement("div")
@@ -1727,7 +1737,29 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         //console.log(box.checked)
         if(box.checked){
           box.checked = false;
-          returns.push(specs[i])
+          if(i === 2){ // 2 means major-specific event, change if order changed 
+            var majorList = document.getElementById("majorList")
+            if(majorList.value !== null && majorList.value !== "Select Major"){
+              returns.push(majorList.value)
+              majorList.value = "Select Major"
+            }
+            else{
+              return [-1]
+            }
+          }
+          else if(i === 3){ // 3 means college-specific event, change if order changed 
+            var collegeList = document.getElementById("collegeList")
+            if(collegeList.value !== null && collegeList.value !== "Select College"){
+              returns.push(collegeList.value)
+              collegeList.value = "Select College"
+            }
+            else{
+              return [-1]
+            }
+          }
+          else{
+            returns.push(specs[i])
+          }
         }
       }
       var otherBox = document.querySelector("input[id=otherTextBox]")
@@ -1772,7 +1804,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       timeUp += time
 
       //console.log(isOutside)
-      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null) {
+      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1)) {
         var error = document.querySelector("#formError")
         error.classList.add("hidden")
         console.log(event.value)
@@ -1798,6 +1830,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         }
         else if(locationVal === "Location" || locationVal === null){
           error.innerText = "Please select a location for the event"
+        }
+        else if(specOptions[0] === -1){
+          error.innerText = "Please select an option for the event specification"
         }
       }
     }
