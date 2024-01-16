@@ -119,11 +119,21 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     </header>
 
   <body class="bg-blue-100" style="height: 100vh">
+    <div id="aboutPage" class="hidden w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
+      <div class="bg-white h-full shadow-md rounded flex px-8 pt-6 py-8 mb-4">
+        <img id="aboutAvatar" class="avatar w-25 h-25 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
+        <div class="ml-2 border-2 border-gray-700"></div>
+        <div class="text-grey-800 text-md flex flex-col justify-end font-bold mb-2">
+          <input id="userNameInput" type="text" id="first_name" maxlength="15" class="ml-3 rounded-lg border-0 border-transparent outline-none focus:border-transparent focus:ring-0 w-full p-0 text-gray-700 placeholder-gray-700 font-bold text-lg" placeholder="">
+          <div id="aboutUsername" class="ml-3 underline text-gray-500"></div>
+        </div>
+      </div>
+    </div>
     <div id="mainPage" class="w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
       <div class="bg-white h-full shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Submit a New Food Event!</h1>
         <div class="flex" style="flex-direction:column">
-          <! -- <input class="shadow appearance-none border rounded w-full mt-2 py-2 px-3 text-grey-800 leading-tight focus:outline-none focus:shadow-outline" type="text" name="second" placeholder="A new todo"></input>
+          <! -- <input class="shadow appearance-none border rounded w-full mt-2 py-2 px-3 text-grey-800 leading-tight focus:outline-none focus:shadow-outline" type="text" name="second" placeholder="A new todo">
           
             <select id="eventType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
               <option selected>Event Type</option>
@@ -321,7 +331,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
                 }
                 votes[button.id.substring(1)] = 1;
                 currentUser.uservotes = votes
-                console.log("Current user", currentUser)
+                //console.log("Current user", currentUser)
                 set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
 
                 for (const child of button.children) {
@@ -336,7 +346,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               else{
                 votes[button.id.substring(1)] = 0;
                 currentUser.uservotes = votes
-                console.log("Current user", currentUser)
+                //console.log("Current user", currentUser)
                 set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
 
                 for (const child of button.children) {
@@ -380,7 +390,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               else{
                 votes[button.id.substring(1)] = 0;
                 currentUser.uservotes = votes
-                console.log("Current user", currentUser)
+                //console.log("Current user", currentUser)
                 set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
 
                 for (const child of button.children) {
@@ -394,6 +404,28 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               }
             } // end downvote button function
           }
+
+          var userNameInput = document.querySelector("#userNameInput")
+
+          if(currentUser.username){
+          userNameInput.value = currentUser.username
+          }
+          else{
+            userNameInput.value = "User"
+          }
+
+          // deal with usernames
+          userNameInput.addEventListener("change", function() {
+            if(userNameInput.value.length > 3){
+              currentUser.displayName = user.displayName
+              currentUser.username = userNameInput.value
+              set(ref(database, 'users/' + user.uid), currentUser);
+            }
+          });
+
+          var useremail = document.querySelector("#email")
+          useremail.innerText = currentUser.username
+
         }, // end snapshot logic
         error => {
           console.log("Error", error)
@@ -403,13 +435,23 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         var useremail = document.querySelector("#email")
         var signoutbutton = document.querySelector("#signOutButton")
         var avatarImg = document.querySelector("#avatarImg")
+        var avatarC = document.querySelector("#aboutAvatar")
+        var aboutName = document.querySelector("#aboutUsername")
 
         loginButton.classList.add("hidden")
         avatar.classList.remove("hidden")
-        useremail.innerText = user.email
+        //useremail.innerText = user.email // changed to username above
 
         if(user.photoURL){
           avatarImg.src = user.photoURL
+        }
+
+        if(user.photoURL){
+          avatarC.src = user.photoURL
+        }
+        
+        if(user.email){
+          aboutName.innerText = user.email
         }
 
         if(!user.usernum){
@@ -1843,11 +1885,15 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     // Begin mePage code
     var switchPage = function() {
       var mainPage = document.querySelector("#mainPage")
+      var aboutPage = document.querySelector("#aboutPage")
       if(mainPage.classList.contains("hidden")){
         mainPage.classList.remove("hidden")
+        aboutPage.classList.add("hidden")
       }
       else{
         mainPage.classList.add("hidden")
+        aboutPage.classList.remove("hidden")
+
       }
     }
     document.querySelector("#userPageButton").addEventListener("click", switchPage)
