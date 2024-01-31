@@ -1270,15 +1270,17 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       var target = outer.dataset.count
       var inners = document.getElementsByClassName("accordionText")
 
-      for(let i = 0; i < inners.length; i++){
-        inners[i].style = "max-width: " + width * 0.9 + "px" // cap the width of the inner text at 90% of the header
-          if(inners[i].id == target){
-            inners[i].setAttribute("class", accordianBaseText)
-          }
-          else{
-            inners[i].setAttribute("class", "hidden" + accordianBaseText)
-          }
-      }
+      if( evt.target.nodeName === "DIV" ){
+        for(let i = 0; i < inners.length; i++){
+          inners[i].style = "max-width: " + width * 0.9 + "px" // cap the width of the inner text at 90% of the header
+            if(inners[i].id == target){
+              inners[i].setAttribute("class", accordianBaseText)
+            }
+            else{
+              inners[i].setAttribute("class", "hidden" + accordianBaseText)
+            }
+        }
+      } 
     }
 
     var showEvent = function( tracking ) {
