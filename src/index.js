@@ -15,8 +15,23 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     .createbutton{
       background-color: rgb(249 115 22); /* change to your desired color */
       }
-      .createbutton:hover {
-        background-color: rgb(251 146 60); /* change to your desired color */
+    .createbutton:hover {
+      background-color: rgb(251 146 60); /* change to your desired color */
+    }
+    .badgeupvote10{
+      filter:  brightness(72%) contrast(126%) hue-rotate(341deg) saturate(121%) sepia(31%);
+    }
+    .badgeupvote100{
+      filter:  brightness(74%) contrast(126%) hue-rotate(161deg) saturate(53%) sepia(26%);
+    }
+    .badgeupvote1000{
+      filter:  brightness(87%) contrast(130%) hue-rotate(360deg) saturate(90%) sepia(10%);
+    }
+    .badgetrend100{
+      filter:  brightness(109%) contrast(86%) saturate(165%);
+    }
+    .locked{
+      filter: grayscale(100%) blur(5px);
     }
     </style>
 
@@ -93,7 +108,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         <span class="sr-only">RIT LOGO</span>
         <img class="h-8 w-auto" src="https://www.rit.edu/brandportal/sites/rit.edu.brandportal/files/2020-04/new_RIT_logo1_w.png" alt="">
       </a>
-      <div>
+      <div id="logo">
         <img class="h-16 w-auto" src="https://i.imgur.com/46U1Z7J.png" alt="">
       </div>
       <div id="avatar" class="hidden">
@@ -119,16 +134,43 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     </header>
 
   <body class="bg-blue-100" style="height: 100vh">
+
     <div id="aboutPage" class="hidden w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
-      <div class="bg-white h-full shadow-md rounded flex px-8 pt-6 py-8 mb-4">
-        <img id="aboutAvatar" class="avatar w-25 h-25 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
-        <div class="ml-2 border-2 border-gray-700"></div>
-        <div class="text-grey-800 text-md flex flex-col justify-end font-bold mb-2">
-          <input id="userNameInput" type="text" id="first_name" maxlength="15" class="ml-3 rounded-lg border-0 border-transparent outline-none focus:border-transparent focus:ring-0 w-full p-0 text-gray-700 placeholder-gray-700 font-bold text-lg" placeholder="">
-          <div id="aboutUsername" class="ml-3 underline text-gray-500"></div>
+      <div class="bg-white h-full shadow-md rounded flex flex-col px-8 pt-6 py-8 mb-4">
+        <div class="flex px-8 pt-6 py-8 mb-4">
+          <img id="aboutAvatar" class="avatar w-25 h-25 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
+          <div class="ml-2 border-2 border-gray-700"></div>
+          <div class="text-grey-800 text-md flex flex-col justify-end font-bold mb-2">
+            <input id="userNameInput" type="text" id="first_name" maxlength="15" class="ml-3 rounded-lg border-0 border-transparent outline-none focus:border-transparent focus:ring-0 w-full p-0 text-gray-700 placeholder-gray-700 font-bold text-lg" placeholder="">
+            <div id="aboutUsername" class="ml-3 underline text-gray-500"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-around">
+          <div class="w-1/6 1/6">
+            <img id="badgeupvote10" class="" src="https://i.imgur.com/k13ZTWR.png" referrerpolicy="no-referrer" alt="Badge">
+            <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Noted</b>Receive 10 upvotes!</div>
+          </div>
+          <div class="w-1/6 1/6">
+            <img id="badgeupvote100" class="" src="https://i.imgur.com/k13ZTWR.png" referrerpolicy="no-referrer" alt="Badge">
+            <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Acclaimed</b>Receive 100 upvotes!</div>
+          </div>
+          <div class="w-1/6 1/6">
+            <img id="badgeupvote1000" class="" src="https://i.imgur.com/k13ZTWR.png" referrerpolicy="no-referrer" alt="Badge">
+            <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Renowned</b>Receive 1000 upvotes!</div>
+          </div>
+          <div class="w-1/6 1/6">
+            <img id="badgetrend100" class="" src="https://i.imgur.com/7PowxEi.png" referrerpolicy="no-referrer" alt="Badge">
+            <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Trending</b>Get 100 upvotes on a post!</div>
+          </div>
+          <div class="w-1/6 1/6">
+            <img class="" src="https://i.imgur.com/KJYCifv.png" style="filter:  brightness(109%) contrast(86%) saturate(165%);" referrerpolicy="no-referrer" alt="Badge">
+            <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b></b></div>
+          </div>
         </div>
       </div>
     </div>
+
     <div id="mainPage" class="w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
       <div class="bg-white h-full shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Submit a New Food Event!</h1>
@@ -215,6 +257,12 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
     import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
     import { getDatabase, ref, child, set, onValue } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js'
+
+    var userId = 0;
+
+    var updateUserBadges;
+    var getUserBadges;
+    var getAllBadges;
 
     // Begin firebase auth code
     const firebaseApp = initializeApp({
@@ -303,6 +351,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               useremail: user.email,
               usernum: 0,
               uservotes: votes,
+              userbadges: {},
             }
             set(ref(database, 'users/' + user.uid), user_data);
           }
@@ -405,10 +454,31 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             } // end downvote button function
           }
 
+          updateUserBadges = function(current_votes){
+            if(!(currentUser.userbadges)){
+              currentUser.userbadges = {}
+            }
+            const upvote_badges = ["badgeupvote10", "badgeupvote100", "badgeupvote1000"]
+            for(var b = 0; b < upvote_badges.length; b++){
+              if(current_votes >= 10 ** (b + 1)){
+                currentUser.userbadges[upvote_badges[b]] = true
+              }
+            }
+            set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+          }
+
+          getUserBadges = function(){
+            return currentUser.userbadges // return dict of badges with true/false (some may be missing)
+          }
+
+          getAllBadges = function(){
+            return ["badgeupvote10", "badgeupvote100", "badgeupvote1000", "badgetrend100"] // should be list of all badges (corresponding styles and ID for img)
+          }
+
           var userNameInput = document.querySelector("#userNameInput")
 
           if(currentUser.username){
-          userNameInput.value = currentUser.username
+            userNameInput.value = currentUser.username
           }
           else{
             userNameInput.value = "User"
@@ -451,11 +521,16 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         }
         
         if(user.email){
-          aboutName.innerText = user.email
+          //aboutName.innerText = user.email
+          // changed to setting votes below
         }
 
         if(!user.usernum){
           user.usernum = 0
+        }
+
+        if(user.uid){
+          userId = user.uid
         }
 
         signoutbutton.onclick = function(){
@@ -477,6 +552,12 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           ui.start('#firebaseuiAuthContainer', uiConfig);
           loginButton.classList.remove("hidden")
           avatar.classList.add("hidden")
+          var mainPage = document.querySelector("#mainPage")
+          var aboutPage = document.querySelector("#aboutPage")
+          if(mainPage.classList.contains("hidden")){
+            mainPage.classList.remove("hidden")
+            aboutPage.classList.add("hidden")
+          }
           console.log('No user');
         }
       }, error => {
@@ -1262,6 +1343,16 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       updateTodos()
     }
 
+    const countVotes = function( user_id ){
+      var votes = 0
+      for(let i = 0; i < todos.length; i++){
+        if(todos[i].user_submitted && todos[i].user_submitted === user_id){
+          votes += todos[i].upvotes
+        }
+      }
+      return votes
+    }
+
     const accordianBaseText = " accordionText flex items-left "
 
     var showInside = function(evt) {
@@ -1645,7 +1736,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         xout.onclick = function () {
           window.todos.splice(xout.value, 1) // remove the element
           updateTodos()
-        }
+        } // unhide below element to be able to remove elements SECURITY THREAT
         xout.className = "hidden bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
 
         var ximg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1857,7 +1948,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         var description = event.value + " at " + locationVal
         var randTrack = Math.random() * 100000000000000000
         console.log(randTrack)
-        window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, completed: false })
+        window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, user_submitted: userId, completed: false })
         event.value = "Event Type"
         location.value = "Location"
         roomNum.value = ""
@@ -1884,21 +1975,37 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
     document.querySelector("#create").addEventListener('click', createTodo)
 
-    // Begin mePage code
-    var switchPage = function() {
+    // Begin mePage code - user info page
+    var switchPage = function(e) {
       var mainPage = document.querySelector("#mainPage")
       var aboutPage = document.querySelector("#aboutPage")
       if(mainPage.classList.contains("hidden")){
         mainPage.classList.remove("hidden")
         aboutPage.classList.add("hidden")
       }
-      else{
+      else if(e.currentTarget.id !== "logo"){ // logo only switches back to main
         mainPage.classList.add("hidden")
         aboutPage.classList.remove("hidden")
-
+        var votes = countVotes(userId)
+        document.querySelector("#aboutUsername").innerText = "Upvotes Recieved: " + votes
+        const badges = getUserBadges() // get the current user badges {badgename: true, ...}
+        const allBadges = getAllBadges() // get all possible badges ["badgename",...]
+        for(var i = 0; i < allBadges.length; i++){
+          if( badges[ allBadges[i] ] ){
+            const badge = document.querySelector("#" + allBadges[i])
+            badge.classList.remove("locked")
+            badge.classList.add(allBadges[i])
+          }
+          else{
+            const badge = document.querySelector("#" + allBadges[i])
+            badge.classList.add("locked")
+          }
+        }
+        updateUserBadges(votes)
       }
     }
     document.querySelector("#userPageButton").addEventListener("click", switchPage)
+    document.querySelector("#logo").addEventListener("click", switchPage)
   </script>
 </html>`
 
