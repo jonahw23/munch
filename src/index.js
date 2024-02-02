@@ -142,7 +142,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           <div class="ml-2 border-2 border-gray-700"></div>
           <div class="text-grey-800 text-md flex flex-col justify-end font-bold mb-2">
             <input id="userNameInput" type="text" id="first_name" maxlength="15" class="ml-3 rounded-lg border-0 border-transparent outline-none focus:border-transparent focus:ring-0 w-full p-0 text-gray-700 placeholder-gray-700 font-bold text-lg" placeholder="">
-            <div id="aboutUsername" class="ml-3 underline text-gray-500"></div>
+            <div id="aboutUsername" class="ml-3 text-gray-500"></div>
           </div>
         </div>
 
@@ -263,6 +263,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     var updateUserBadges;
     var getUserBadges;
     var getAllBadges;
+    var getUserRecievedVotes;
+    var userMadePost;
+    var getUserPosts;
 
     // Begin firebase auth code
     const firebaseApp = initializeApp({
@@ -280,6 +283,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       function startUpWithCurrent(){
         const user = auth.currentUser;
+        if(!user){
+          alert("No user found")
+        }
         runStartUp(user)
       }
 
@@ -303,6 +309,30 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         'signInFlow': 'popup',
       };
 
+      const addToUserUpvotes = function(uid, vote_amount){
+        console.log("Called", uid, vote_amount)
+        const database = getDatabase(firebaseApp);
+        const loadUserVoted = ref(database, 'users/' + uid);
+        onValue(loadUserVoted, (snapshot) => {
+          if(snapshot.val() !== null){
+            const userToAddVote = snapshot.val();
+            const currentVotes = userToAddVote.votesrecieved
+            userToAddVote.votesrecieved = currentVotes + vote_amount
+            console.log("Adding", vote_amount, "to user", userToAddVote)
+            set(ref(database, 'users/' + uid), userToAddVote); // this one is different from the normal setting
+          }
+          else{
+            console.log("No user with matching ID") // should not ever occur
+          }
+        }, // end snapshot logic
+        {
+          onlyOnce: true
+        },
+        error => {
+          console.log("Error", error)
+        }); // end loaded user logic
+      }
+
       // The start method will wait until the DOM is loaded.
 
       //signInWithEmailAndPassword(auth, "jthirdextra@gmail.com", "Password123")
@@ -322,7 +352,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             //votes[nameBlocks[i].dataset.track] = nameBlocks[i].dataset.votes // we dont want the total number of votes
             votes[nameBlocks[i].dataset.track] = 0
           }
-          console.log("Votes", votes)
+          //console.log("Votes", votes)
 
           if(snapshot.val() !== null){
             currentUser = snapshot.val();
@@ -351,14 +381,16 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               useremail: user.email,
               usernum: 0,
               uservotes: votes,
+              votesrecieved: 0,
               userbadges: {},
+              userposts: 0,
             }
             set(ref(database, 'users/' + user.uid), user_data);
           }
 
           var numButton = document.querySelector("#userNumButton")
           numButton.innerText = userNum
-          console.log("set user num to", userNum)
+          //console.log("set user num to", userNum)
           numButton.onclick = function(){
             set(ref(database, 'users/' + user.uid + '/usernum'), userNum + 1);
             numButton.innerText = userNum + 1
@@ -454,7 +486,31 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             } // end downvote button function
           }
 
-          updateUserBadges = function(current_votes){
+          getUserRecievedVotes = function(){
+            if(!( currentUser.votesrecieved )){
+              currentUser.votesrecieved = 0
+              set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+            }
+            return currentUser.votesrecieved
+          }
+
+          getUserPosts = function(){
+            if(!( currentUser.userposts )){
+              currentUser.userposts = 0
+              set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+            }
+            return currentUser.userposts
+          }
+
+          userMadePost = function(){
+            if(!( currentUser.userposts )){
+              currentUser.userposts = 0
+            }
+            currentUser.userposts += 1
+            set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+          }
+
+          updateUserBadges = function(current_votes, todo_set){ // check all badge conditions, update below functions as added
             if(!(currentUser.userbadges)){
               currentUser.userbadges = {}
             }
@@ -462,6 +518,11 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             for(var b = 0; b < upvote_badges.length; b++){
               if(current_votes >= 10 ** (b + 1)){
                 currentUser.userbadges[upvote_badges[b]] = true
+              }
+            }
+            for(var t = 0; t < todo_set.length; t++){
+              if(todo_set[t].user_submitted === user.uid && todo_set[t].upvotes >= 100){
+                currentUser.userbadges["badgetrend100"] = true
               }
             }
             set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
@@ -495,7 +556,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
           var useremail = document.querySelector("#email")
           useremail.innerText = currentUser.username
-
+          
         }, // end snapshot logic
         error => {
           console.log("Error", error)
@@ -707,6 +768,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       "FMS Facilities Management Services": [0,0],
       "FNK 40 Franklin Street": [0,0],
       "GAN Frank E. Gannett Hall": [43.08527049805491, -77.67629104238274],
+      "Greek Lawn": [0,0],
       "GHA Greek House A - Zeta Tau Alpha": [0,0],
       "GHB Greek House B - Delta Phi Epsilon": [0,0],
       "GHC Greek House C - Alpha Sigma Alpha": [0,0],
@@ -1556,7 +1618,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         var specWrap = document.createElement("div")
         specWrap.setAttribute("Class", "flex items-center mb-4")
 
-        console.log(specs[i])
+        //console.log(specs[i])
 
         specAdd.setAttribute("type", "checkbox")
         specAdd.setAttribute("id", "default-checkbox")
@@ -1789,11 +1851,11 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         var timeLeft = todo.hours - time
 
-        if(timeLeft < 60000){
+        if(timeLeft < 60000){ // remove the todo due to time out 60000
           //console.log("Cutting")
+          addToUserUpvotes(window.todos[count].user_submitted, window.todos[count].upvotes)
           window.todos.splice(count, 1)
           updateTodos()
-          populateTodos()
           return // to make sure it doesn't finish rendering the finished one
         }
 
@@ -1840,7 +1902,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         count ++
       })
     }
-
+  
     populateTodos()
     fillBuildings()
     fillFoods()
@@ -1954,6 +2016,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         roomNum.value = ""
         hours.value = ""
         isOutside.checked = false
+        userMadePost()
         checkOutside()
         updateTodos()
         loadPins()
@@ -1987,21 +2050,25 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         mainPage.classList.add("hidden")
         aboutPage.classList.remove("hidden")
         var votes = countVotes(userId)
-        document.querySelector("#aboutUsername").innerText = "Upvotes Recieved: " + votes
+        votes += getUserRecievedVotes() // add saved votes
+
+        updateUserBadges(votes, todos) // if new developments in badges, change them! this function will need new params as more badges are added
+
+        document.querySelector("#aboutUsername").innerHTML = "<u>Events Reported:</u> <font color='#ff9900'>🗗 " + getUserPosts() + "</font><br><u>Upvotes Recieved:</u> <font color='#ff9900'>▲ " + votes + "</font>"
         const badges = getUserBadges() // get the current user badges {badgename: true, ...}
         const allBadges = getAllBadges() // get all possible badges ["badgename",...]
         for(var i = 0; i < allBadges.length; i++){
-          if( badges[ allBadges[i] ] ){
+          if( badges[ allBadges[i] ] ){ // if the badge has been achieved, it gets the classname of its ID
             const badge = document.querySelector("#" + allBadges[i])
             badge.classList.remove("locked")
             badge.classList.add(allBadges[i])
           }
-          else{
+          else{ // otherwise it gets the locked classname
             const badge = document.querySelector("#" + allBadges[i])
             badge.classList.add("locked")
           }
         }
-        updateUserBadges(votes)
+  
       }
     }
     document.querySelector("#userPageButton").addEventListener("click", switchPage)
