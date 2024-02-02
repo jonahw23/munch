@@ -266,6 +266,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     var getUserRecievedVotes;
     var userMadePost;
     var getUserPosts;
+    var getUserCoolDown;
+    var setUserCoolDown;
 
     // Begin firebase auth code
     const firebaseApp = initializeApp({
@@ -378,6 +380,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             }
           }
           else { // first time this user id is seen
+            const d = new Date();
+            var time = d.getTime();
             var user_data = {
               username: user.displayName,
               useremail: user.email,
@@ -386,6 +390,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               votesrecieved: 0,
               userbadges: {},
               userposts: 0,
+              usercooldown: time,
             }
             set(ref(database, 'users/' + user.uid), user_data);
           }
@@ -486,6 +491,23 @@ const html = todos => /*html*/ `<!DOCTYPE html>
                 addUpVote(button.dataset.count)
               }
             } // end downvote button function
+          }
+
+          getUserCoolDown = function(){
+            if(!( currentUser.usercooldown )){
+              const d = new Date();
+              var time = d.getTime();
+              currentUser.usercooldown = time
+              set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+            }
+            return currentUser.usercooldown
+          }
+
+          setUserCoolDown = function(addTime){
+            const d = new Date();
+            var time = d.getTime();
+            currentUser.usercooldown = time + addTime
+            set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
           }
 
           getUserRecievedVotes = function(){
@@ -621,6 +643,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             mainPage.classList.remove("hidden")
             aboutPage.classList.add("hidden")
           }
+          var submitButton = document.querySelector("#create")
+          submitButton.innerText = "Log in to submit a food event!"
+          submitButton.disabled = true;
           console.log('No user');
         }
       }, error => {
@@ -2003,8 +2028,10 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       timeUp += time
 
+      var noCooldown = true // remove before prod
+
       //console.log(isOutside)
-      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1)) {
+      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1) && (getUserCoolDown() - 60000 <= time || noCooldown) ) {
         var error = document.querySelector("#formError")
         error.classList.add("hidden")
         console.log(event.value)
@@ -2018,6 +2045,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         roomNum.value = ""
         hours.value = ""
         isOutside.checked = false
+        setUserCoolDown(600000)
         userMadePost()
         checkOutside()
         updateTodos()
@@ -2026,7 +2054,11 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       else{
         var error = document.querySelector("#formError")
         error.classList.remove("hidden")
-        if(event.value === "Event Type" || event.value === null){
+        if((getUserCoolDown() - 60000 > time) && !noCooldown){
+          var minsLeft = Math.floor( ( getUserCoolDown() - time ) / 60000)
+          error.innerText = "Please wait " + minsLeft +" minutes before submitting again"
+        }
+        else if(event.value === "Event Type" || event.value === null){
           error.innerText = "Please select an event type"
         }
         else if(locationVal === "Location" || locationVal === null){
