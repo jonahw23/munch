@@ -281,10 +281,12 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     
       const auth = getAuth(firebaseApp);
 
-      function startUpWithCurrent(){
-        const user = auth.currentUser;
+      async function startUpWithCurrent(){
+        const user = await auth.currentUser;
         if(!user){
-          alert("No user found")
+          //location.reload(); // this prevents upvote saving for some reason
+          //alert("No user found")
+          console.log("No user found")
         }
         runStartUp(user)
       }
