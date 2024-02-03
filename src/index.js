@@ -18,6 +18,12 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     .createbutton:hover {
       background-color: rgb(251 146 60); /* change to your desired color */
     }
+    .confirmbutton{
+      background-color: rgb(249 115 22);
+    }
+    .confirmbutton:hover {
+      background-color: rgb(251 146 60);
+    }
     .badgeupvote10{
       filter:  brightness(72%) contrast(126%) hue-rotate(341deg) saturate(121%) sepia(31%);
     }
@@ -28,6 +34,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       filter:  brightness(87%) contrast(130%) hue-rotate(360deg) saturate(90%) sepia(10%);
     }
     .badgetrend100{
+      filter:  brightness(109%) contrast(86%) saturate(165%);
+    }
+    .badgegive500{
       filter:  brightness(109%) contrast(86%) saturate(165%);
     }
     .locked{
@@ -100,6 +109,36 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       </div>
   </div>
 
+  <!-- Confirmation modal -->
+  <div id="confirmModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-black bg-opacity-50 max-h-full">
+      <div class="relative p-4 w-full max-w-2xl max-h-full">
+          <!-- Modal content -->
+          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+              <!-- Modal header -->
+              <div class="flex items-left flex-col justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Confirm Event Submission
+                  </h3>
+                  <h5 class="text-sm">
+                    <br>
+                    Are any of these events the same as the event you're submitting?
+                  </h5>
+              </div>
+              <!-- Modal body -->
+              <div id=confirmBody class="">
+              
+              </div>
+    
+              <!-- Modal footer (buttons hidden for now) -->
+              <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                  <button id="confirmyes" data-modal-hide="static-modal" type="button" class="confirmbutton text-white bg-blue-700 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800">They're Different, Submit</button>
+                  <button id="confirmno" data-modal-hide="static-modal" type="button" class="ml-2 ms-3 text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">It's the Same</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Start header -->
   <header class="bg-white" style="background-color:rgb(249 115 22);">
   
   <nav class="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
@@ -131,7 +170,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       </button>
     </div>
     </nav>
-    </header>
+    </header> 
+    <!-- End header -->
 
   <body class="bg-blue-100" style="height: 100vh">
 
@@ -164,8 +204,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Trending</b>Get 100 upvotes on a post!</div>
           </div>
           <div class="w-1/6 1/6">
-            <img class="" src="https://i.imgur.com/KJYCifv.png" style="filter:  brightness(109%) contrast(86%) saturate(165%);" referrerpolicy="no-referrer" alt="Badge">
-            <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b></b></div>
+            <img id="badgegive500" class="" src="https://i.imgur.com/KJYCifv.png" referrerpolicy="no-referrer" alt="Badge">
+            <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Connoisseur</b>Give 500 votes.</div>
           </div>
         </div>
       </div>
@@ -594,6 +634,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
                 currentUser.userbadges["badgetrend100"] = true
               }
             }
+            if(getUserVotesGiven() >= 500){
+              currentUser.userbadges["badgegive500"] = true
+            }
             set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
           }
 
@@ -602,7 +645,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           }
 
           getAllBadges = function(){
-            return ["badgeupvote10", "badgeupvote100", "badgeupvote1000", "badgetrend100"] // should be list of all badges (corresponding styles and ID for img)
+            return ["badgeupvote10", "badgeupvote100", "badgeupvote1000", "badgetrend100", "badgegive500"] // should be list of all badges (corresponding styles and ID for img)
           }
 
           var userNameInput = document.querySelector("#userNameInput")
@@ -860,6 +903,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       "HAC Hale-Andrews Student Life Center": [43.08455245869932, -77.67222248855687],
       "HLC Hugh L. Carey Hall": [43.08272602758297, -77.67885114501152],
       "ICC RIT Inn & Conference Center": [0,0],
+      "Infinity Quad": [0,0],
       "INS Institute Hall": [43.08542499145876, -77.6791176728135],
       "JEF 175 Jefferson Road": [0,0],
       "KGH Kate Gleason Hall": [43.08435368710708, -77.66809233696328],
@@ -1913,8 +1957,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           foodOptions = []
         }
 
-        text.innerHTML += "Location: " 
-        text.innerHTML += todo.outside ? todo.location + " (Outside)": todo.location + ", Room " + todo.room
+        text.innerHTML += "Location: "
+        text.innerHTML += todo.outside ? todo.location + " (Outside)": todo.location + ( todo.room ? ", Room " + todo.room : "")
 
         const d = new Date();
         var time = d.getTime();
@@ -2075,6 +2119,107 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       var noCooldown = true // remove before prod
 
+      const confirm = function(conflicts, newtodo){
+        var modal = document.querySelector("#confirmModal")
+        modal.classList.remove("hidden")
+
+        var inside = document.querySelector("#confirmBody")
+        inside.innerHTML = null
+
+        console.log("inside", inside)
+
+        var text = document.createElement("paragraph")
+
+        for(var i = 0; i < conflicts.length; i++){
+          var todo = conflicts[i]
+          var foodOptions = todo.foods
+          var newLine = "<br>"
+
+          var boldPiece = document.createElement("span")
+          boldPiece.style = 'font-weight: bold'
+          var nameText = todo.name + (todo.outside ? " (Outside)" : (todo.room ? ", Room " + todo.room : "") )
+          var lastSpaceIndex = nameText.lastIndexOf(' ');
+          if (lastSpaceIndex !== -1) { // Check if there's at least two words
+            nameText = nameText.substring(0, lastSpaceIndex) + '&nbsp;' + nameText.substring(lastSpaceIndex + 1);
+          }
+          boldPiece.innerHTML = nameText
+          text.appendChild(boldPiece)
+        
+          if(foodOptions == null){
+            foodOptions = []
+          }
+
+          const d = new Date();
+          var time = d.getTime();
+
+          // console.log("Todo Hours:" + todo.hours + " " + todo.location)
+
+          var timeLeft = todo.hours - time
+
+          if(timeLeft < 60000){ // remove the todo due to time out 60000
+            //console.log("Cutting")
+            addToUserUpvotes(window.todos[count].user_submitted, window.todos[count].upvotes)
+            window.todos.splice(count, 1)
+            updateTodos()
+            return // to make sure it doesn't finish rendering the finished one
+          }
+
+          //console.log("Time left", timeLeft + " " + todo.location)
+          var hoursLeft = Math.floor(timeLeft / 3600000)
+          timeLeft -= hoursLeft * 3600 * 1000
+          var minsLeft = Math.floor(timeLeft / 60000)
+          var timeContent = "Time left: " + (hoursLeft > 0 ? hoursLeft + " hours and " : "") + minsLeft + " minutes"
+
+          text.innerHTML += newLine + timeContent
+
+          if(todo.specs && todo.specs.length > 0){
+            var specsText = "This event is restricted to students in the "
+            for(let i = 0; i < todo.specs.length; i++){
+              var specPiece = document.createElement("span")
+              specPiece.innerHTML = newLine + "(" + specsText + todo.specs[i] + ")"
+              text.appendChild(specPiece)
+            }
+          }
+
+          text.innerHTML += newLine
+
+          if(i < conflicts.length - 1){
+            text.innerHTML += newLine
+          }
+
+          inside.setAttribute("class", "m-4 text-left")
+          console.log("inside", inside)
+          inside.appendChild(text)
+        }
+
+        var confirmno = document.querySelector("#confirmno").addEventListener('click', function() {
+          modal.classList.add("hidden")
+          event.value = "Event Type"
+          location.value = "Location"
+          roomNum.value = ""
+          hours.value = ""
+          isOutside.checked = false
+          modal.classList.add("hidden")
+          checkOutside()
+        })
+
+        var confirmyes = document.querySelector("#confirmyes").addEventListener('click', function() {
+          window.todos = [].concat(todos, newtodo)
+          event.value = "Event Type"
+          location.value = "Location"
+          roomNum.value = ""
+          hours.value = ""
+          isOutside.checked = false
+          modal.classList.add("hidden")
+          setUserCoolDown(600000)
+          userMadePost()
+          checkOutside()
+          updateTodos()
+          loadPins()
+        })
+      }
+
+      // actually submit
       //console.log(isOutside)
       if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1) && (getUserCoolDown() - 60000 <= time || noCooldown) ) {
         var error = document.querySelector("#formError")
@@ -2083,18 +2228,29 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         console.log(locationVal)
         var description = event.value + " at " + locationVal
         var randTrack = Math.random() * 100000000000000000
-        console.log(randTrack)
-        window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, user_submitted: userId, completed: false })
-        event.value = "Event Type"
-        location.value = "Location"
-        roomNum.value = ""
-        hours.value = ""
-        isOutside.checked = false
-        setUserCoolDown(600000)
-        userMadePost()
-        checkOutside()
-        updateTodos()
-        loadPins()
+        //console.log(randTrack)
+        var conflicts = []
+        for(var i = 0; i < todos.length; i++){
+          if(todos[i].location === locationVal){
+            conflicts.push(todos[i])
+          }
+        }
+        if(conflicts.length === 0){ // if conflicts is not zero, prompt confirm, then do same as below (changes should be made both places)
+          window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, user_submitted: userId, completed: false })
+          event.value = "Event Type"
+          location.value = "Location"
+          roomNum.value = ""
+          hours.value = ""
+          isOutside.checked = false
+          setUserCoolDown(600000)
+          userMadePost()
+          checkOutside()
+          updateTodos()
+          loadPins()
+        }
+        else{
+          confirm(conflicts, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, user_submitted: userId, completed: false })
+        }
       }
       else{
         var error = document.querySelector("#formError")
@@ -2112,7 +2268,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         else if(specOptions[0] === -1){
           error.innerText = "Please select an option for the event specification"
         }
-      }
+      } // end if else of submission fields
     } // end createTodo
 
     document.querySelector("#create").addEventListener('click', createTodo)
@@ -2133,7 +2289,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         updateUserBadges(votes, todos) // if new developments in badges, change them! this function will need new params as more badges are added
 
-        document.querySelector("#aboutUsername").innerHTML = "<u>Events Reported:</u> <font color='#ff9900'>🗗 " + getUserPosts() + "</font><br><u>Upvotes Recieved:</u> <font color='#ff9900'>▲ " + votes + "</font><br>" + "Upvotes: " + getUserVotesGiven("up") + " Downvotes: " + getUserVotesGiven("down")
+        document.querySelector("#aboutUsername").innerHTML = "<u>Events Reported:</u> <font color='#ff9900'>🗗 " + getUserPosts() + "</font><br><u>Upvotes Recieved:</u> <font color='#ff9900'>▲ " + votes + "</font><br>" //+ "Upvotes: " + getUserVotesGiven("up") + " Downvotes: " + getUserVotesGiven("down")
         const badges = getUserBadges() // get the current user badges {badgename: true, ...}
         const allBadges = getAllBadges() // get all possible badges ["badgename",...]
         for(var i = 0; i < allBadges.length; i++){
