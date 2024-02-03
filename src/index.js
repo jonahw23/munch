@@ -81,7 +81,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
   <button id="userNumButton" class="hidden"></button>
 
   <!-- Login modal -->
-  <div id="loginModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-black bg-opacity-50 max-h-full">
+  <div id="loginModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="loginModal hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-black bg-opacity-50 max-h-full">
       <div class="relative p-4 w-full max-w-2xl max-h-full">
           <!-- Modal content -->
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -152,7 +152,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       </div>
       <div id="avatar" class="hidden">
         <img id="avatarImg" class="avatar w-10 h-10 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
-        <div id="userDropdown" class="hidden absolute right-0 mt-3 mr-3 w-auto overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-gray-900/5">
+        <div id="userDropdown" class="userDropdown hidden absolute right-0 mt-3 mr-3 w-auto overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-gray-900/5">
             <div class="px-4 py-1 mt-1 text-sm text-gray-900 dark:text-white">
               <div id="username">User logged in</div>
               <div id="email" class="font-medium truncate">name@email.com</div>
@@ -178,32 +178,32 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     <div id="aboutPage" class="hidden w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
       <div class="bg-white h-full shadow-md rounded flex flex-col px-8 pt-6 py-8 mb-4">
         <div class="flex px-8 pt-6 py-8 mb-4">
-          <img id="aboutAvatar" class="avatar w-25 h-25 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
-          <div class="ml-2 border-2 border-gray-700"></div>
+          <img id="aboutAvatar" class="avatar aspect-square w-24 lg:w-32 mt-4 h-24 lg:mt-0 lg:h-32 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" referrerpolicy="no-referrer" alt="Rounded avatar">
+          <div class="ml-4 border-2 border-gray-700"></div>
           <div class="text-grey-800 text-md flex flex-col justify-end font-bold mb-2">
             <input id="userNameInput" type="text" id="first_name" maxlength="15" class="ml-3 rounded-lg border-0 border-transparent outline-none focus:border-transparent focus:ring-0 w-full p-0 text-gray-700 placeholder-gray-700 font-bold text-lg" placeholder="">
             <div id="aboutUsername" class="ml-3 text-gray-500"></div>
           </div>
         </div>
 
-        <div class="flex items-center justify-around">
-          <div class="w-1/6 1/6">
+        <div class="flex flex-row flex-wrap items-center justify-around">
+          <div class="w-5/12 md:w-1/4 lg:w-1/6">
             <img id="badgeupvote10" class="" src="https://i.imgur.com/k13ZTWR.png" referrerpolicy="no-referrer" alt="Badge">
             <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Noted</b>Receive 10 upvotes!</div>
           </div>
-          <div class="w-1/6 1/6">
+          <div class="w-5/12 md:w-1/4 lg:w-1/6">
             <img id="badgeupvote100" class="" src="https://i.imgur.com/k13ZTWR.png" referrerpolicy="no-referrer" alt="Badge">
             <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Acclaimed</b>Receive 100 upvotes!</div>
           </div>
-          <div class="w-1/6 1/6">
+          <div class="w-5/12 md:w-1/4 lg:w-1/6">
             <img id="badgeupvote1000" class="" src="https://i.imgur.com/k13ZTWR.png" referrerpolicy="no-referrer" alt="Badge">
             <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Renowned</b>Receive 1000 upvotes!</div>
           </div>
-          <div class="w-1/6 1/6">
+          <div class="w-5/12 md:w-1/4 lg:w-1/6">
             <img id="badgetrend100" class="" src="https://i.imgur.com/7PowxEi.png" referrerpolicy="no-referrer" alt="Badge">
             <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Trending</b>Get 100 upvotes on a post!</div>
           </div>
-          <div class="w-1/6 1/6">
+          <div class="w-5/12 md:w-1/4 lg:w-1/6">
             <img id="badgegive500" class="" src="https://i.imgur.com/KJYCifv.png" referrerpolicy="no-referrer" alt="Badge">
             <div class="h-20 text-grey-800 text-md flex flex-col text-center mb-2"><b>Connoisseur</b>Give 500 votes.</div>
           </div>
@@ -2291,7 +2291,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         updateUserBadges(votes, todos) // if new developments in badges, change them! this function will need new params as more badges are added
 
-        document.querySelector("#aboutUsername").innerHTML = "<u>Events Reported:</u> <font color='#ff9900'>🗗 " + getUserPosts() + "</font><br><u>Upvotes Recieved:</u> <font color='#ff9900'>▲ " + votes + "</font><br>" //+ "Upvotes: " + getUserVotesGiven("up") + " Downvotes: " + getUserVotesGiven("down")
+        document.querySelector("#aboutUsername").innerHTML = "<u>Events Reported:</u>&nbsp;<font color='#ff9900'>🗗&nbsp;" + getUserPosts() + "</font><br><u>Upvotes Recieved:</u>&nbsp;<font color='#ff9900'>▲&nbsp;" + votes + "</font><br>" //+ "Upvotes: " + getUserVotesGiven("up") + " Downvotes: " + getUserVotesGiven("down")
         const badges = getUserBadges() // get the current user badges {badgename: true, ...}
         const allBadges = getAllBadges() // get all possible badges ["badgename",...]
         for(var i = 0; i < allBadges.length; i++){
