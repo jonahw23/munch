@@ -1481,7 +1481,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     map.addLayer(locationLayer)
 
     const locate = document.createElement('div');
-    locate.className = 'ol-control ol-unselectable locate';
+    locate.className = 'ol-control ol-unselectable locate mt-5 lg:mt-0';
     locate.innerHTML = '<button title="Home">⧈</button>';
     // ◎🏠⌂⧈
     locate.addEventListener('click', function () {
