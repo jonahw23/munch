@@ -212,7 +212,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     </div>
 
     <div id="mainPage" class="w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
-      <div class="bg-white h-full lg:mr-5 lg:ml-5 shadow-md rounded px-8 pt-6 py-8 mb-4">
+      <div class="bg-white lg:w-1/2 h-full lg:mr-5 lg:ml-5 shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Submit a New Food Event!</h1>
         <div class="flex" style="flex-direction:column">
           <! -- <input class="shadow appearance-none border rounded w-full mt-2 py-2 px-3 text-grey-800 leading-tight focus:outline-none focus:shadow-outline" type="text" name="second" placeholder="A new todo">
@@ -1808,14 +1808,14 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       otherBox.setAttribute("type", "checkbox")
       otherBox.setAttribute("id", "default-checkbox")
-      otherBox.setAttribute("Value", "otherCheckBox")
+      otherBox.setAttribute("Value", "otherSpecCheckBox")
       otherBox.setAttribute("Class", "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600")
 
       other.setAttribute("type", "text")
       other.setAttribute("For", otherBox)
       other.setAttribute("Class", "bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-auto ml-1 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
       other.setAttribute("placeholder", "Other")
-      other.setAttribute("id", "otherTextBox")
+      other.setAttribute("id", "otherSpecTextBox")
       //console.log(other)
 
       //console.log(otherBox)
@@ -1997,7 +1997,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         var description = foodOptions.length > 0 ? "" : newLine + "No food type specified"
         if(foodOptions.length > 0){
-          description += newLine + "Food types:"
+          description += newLine + "Food available:"
           for(let i = 0; i < foodOptions.length; i++){
             description += newLine + "• " + foodOptions[i]
           } // This is how I have to do nextLine / newLine
@@ -2078,8 +2078,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           }
         }
       }
-      var otherBox = document.querySelector("input[id=otherTextBox]")
-      var otherCheck = document.querySelector("input[value=otherCheckBox]") 
+      var otherBox = document.querySelector("input[id=otherSpecTextBox]")
+      var otherCheck = document.querySelector("input[value=otherSpecCheckBox]") 
       if(otherBox.value != null && otherCheck.checked){
         returns.push(otherBox.value)
         otherBox.value = null
