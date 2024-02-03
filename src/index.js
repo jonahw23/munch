@@ -268,6 +268,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     var getUserPosts;
     var getUserCoolDown;
     var setUserCoolDown;
+    var getUserVotesGiven;
 
     // Begin firebase auth code
     const firebaseApp = initializeApp({
@@ -391,8 +392,26 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               userbadges: {},
               userposts: 0,
               usercooldown: time,
+              userupvotesgiven: 0,
+              userdownvotesgiven: 0,
             }
             set(ref(database, 'users/' + user.uid), user_data);
+          }
+
+          const addToUserUpGiven = function(plusminus){
+            if(! (currentUser.userupvotesgiven)){
+              currentUser.userupvotesgiven = 0
+            }
+            currentUser.userupvotesgiven += plusminus
+            set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+          }
+
+          const addToUserDownGiven = function(plusminus){
+            if(! (currentUser.userdownvotesgiven)){
+              currentUser.userdownvotesgiven = 0
+            }
+            currentUser.userdownvotesgiven += plusminus
+            set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
           }
 
           var numButton = document.querySelector("#userNumButton")
@@ -413,9 +432,10 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             upVoteButtons[i].onclick = function(evt) {
               var button = evt.currentTarget
 
-              if(votes[button.id.substring(1)] !== 1){
-                if(votes[button.id.substring(1)] == -1){
+              if(votes[button.id.substring(1)] !== 1){ // adding upvote
+                if(votes[button.id.substring(1)] == -1){ // there is a downvote already
                   addUpVote(button.dataset.count)
+                  addToUserDownGiven(-1)
                 }
                 votes[button.id.substring(1)] = 1;
                 currentUser.uservotes = votes
@@ -430,8 +450,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
                   child.setAttribute("stroke", "currentColor")
                 }
                 addUpVote(button.dataset.count)
+                addToUserUpGiven(1)
               }
-              else{
+              else{ // removing upvote
                 votes[button.id.substring(1)] = 0;
                 currentUser.uservotes = votes
                 //console.log("Current user", currentUser)
@@ -445,6 +466,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
                   child.setAttribute("stroke", "currentColor")
                 }
                 addDownVote(button.dataset.count)
+                addToUserUpGiven(-1)
               }
             } // end upvote button function
           }
@@ -458,9 +480,10 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             downVoteButtons[i].onclick = function(evt) {
               var button = evt.currentTarget
               
-              if(votes[button.id.substring(1)] !== -1){
-                if(votes[button.id.substring(1)] == 1){
+              if(votes[button.id.substring(1)] !== -1){ // adding downvote
+                if(votes[button.id.substring(1)] == 1){ // there is an upvote already
                   addDownVote(button.dataset.count)
+                  addToUserUpGiven(-1)
                 }
                 votes[button.id.substring(1)] = -1;
                 currentUser.uservotes = votes
@@ -474,8 +497,9 @@ const html = todos => /*html*/ `<!DOCTYPE html>
                   child.setAttribute("stroke", "currentColor")
                 }
                 addDownVote(button.dataset.count)
+                addToUserDownGiven(1)
               } 
-              else{
+              else{ // removing downvote
                 votes[button.id.substring(1)] = 0;
                 currentUser.uservotes = votes
                 //console.log("Current user", currentUser)
@@ -489,10 +513,31 @@ const html = todos => /*html*/ `<!DOCTYPE html>
                   child.setAttribute("stroke", "currentColor")
                 }
                 addUpVote(button.dataset.count)
+                addToUserDownGiven(-1)
               }
             } // end downvote button function
           }
 
+          getUserVotesGiven = function(updownboth){
+            if(! (currentUser.userupvotesgiven)){
+              currentUser.userupvotesgiven = 0
+              set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+            }
+            if(! (currentUser.userdownvotesgiven)){
+              currentUser.userdownvotesgiven = 0
+              set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+            }
+            if(updownboth === "up"){
+              return currentUser.userupvotesgiven
+            }
+            else if(updownboth === "down"){
+              return currentUser.userdownvotesgiven
+            }
+            else{
+              return currentUser.userdownvotesgiven + currentUser.userupvotesgiven
+            }
+          }
+          
           getUserCoolDown = function(){
             if(!( currentUser.usercooldown )){
               const d = new Date();
@@ -1450,7 +1495,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       var target = outer.dataset.count
       var inners = document.getElementsByClassName("accordionText")
 
-      if( evt.target.nodeName === "DIV" ){
+      if( evt.target.nodeName === "DIV" || evt.target.classList.contains("shellbox") ){ // check if onclick is not occuring at an upvote
         for(let i = 0; i < inners.length; i++){
           inners[i].style = "max-width: " + width * 0.9 + "px" // cap the width of the inner text at 90% of the header
             if(inners[i].id == target){
@@ -1746,7 +1791,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         // display
         var el = document.createElement("button")
-        el.className = "border-t py-4"
+        el.className = "shellbox border-t py-4"
         el.className += "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full mt-2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex-wrap items-left justify-between"
         el.dataset.todo = todo.id
         el.dataset.count = count
@@ -2088,7 +2133,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         updateUserBadges(votes, todos) // if new developments in badges, change them! this function will need new params as more badges are added
 
-        document.querySelector("#aboutUsername").innerHTML = "<u>Events Reported:</u> <font color='#ff9900'>🗗 " + getUserPosts() + "</font><br><u>Upvotes Recieved:</u> <font color='#ff9900'>▲ " + votes + "</font>"
+        document.querySelector("#aboutUsername").innerHTML = "<u>Events Reported:</u> <font color='#ff9900'>🗗 " + getUserPosts() + "</font><br><u>Upvotes Recieved:</u> <font color='#ff9900'>▲ " + votes + "</font><br>" + "Upvotes: " + getUserVotesGiven("up") + " Downvotes: " + getUserVotesGiven("down")
         const badges = getUserBadges() // get the current user badges {badgename: true, ...}
         const allBadges = getAllBadges() // get all possible badges ["badgename",...]
         for(var i = 0; i < allBadges.length; i++){
