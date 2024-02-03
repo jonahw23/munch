@@ -212,7 +212,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     </div>
 
     <div id="mainPage" class="w-full flex content-center justify-evenly lg:flex-row flex-col mt-8">
-      <div class="bg-white h-full shadow-md rounded px-8 pt-6 py-8 mb-4">
+      <div class="bg-white h-full lg:mr-5 lg:ml-5 shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Submit a New Food Event!</h1>
         <div class="flex" style="flex-direction:column">
           <! -- <input class="shadow appearance-none border rounded w-full mt-2 py-2 px-3 text-grey-800 leading-tight focus:outline-none focus:shadow-outline" type="text" name="second" placeholder="A new todo">
@@ -264,7 +264,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       </div>
 
-      <div class="h-full bg-white shadow-md rounded px-8 pt-6 py-8 mb-4">
+      <div class="h-full lg:mr-5 bg-white shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Current Food Events</h1>
         <div class="mt-4" id="todos"></div>
         <div id="map" class="mt-4"></div>
@@ -1750,11 +1750,13 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         specWrap.appendChild(specAdd)
         specWrap.appendChild(specLabel)
 
+        var listclass = "w-1/2 lg:-mr-48 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+
         if(specs[i].includes("Major")){
           var majorList = document.createElement("select")
           majorList.setAttribute("id", "majorList")
-          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-64 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
-          majorList.style.width = "300px"
+          majorList.setAttribute("Class", listclass)
+          //majorList.style.width = "300px"
 
           //This is just the fillbuildings code, should be updated along with fillbuildings
           majorList.innerHTML = null
@@ -1776,8 +1778,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         if(specs[i].includes("College")){
           var majorList = document.createElement("select")
           majorList.setAttribute("id", "collegeList")
-          majorList.setAttribute("Class", "bg-gray-50 border border-gray-300 text-gray-900 text-sm -mr-64 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/4 ml-2 p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
-          majorList.style.width = "300px"
+          majorList.setAttribute("Class", listclass)
+          //majorList.style.width = "300px"
 
           //This is just the fillbuildings code, should be updated along with fillbuildings
           majorList.innerHTML = null
@@ -1802,7 +1804,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       var otherBox = document.createElement("input")
       var other = document.createElement("input")
       var otherWrap = document.createElement("div")
-      otherWrap.setAttribute("Class", "flex items-center mb-4")
+      otherWrap.setAttribute("Class", "flex w-full items-center mb-4")
 
       otherBox.setAttribute("type", "checkbox")
       otherBox.setAttribute("id", "default-checkbox")
@@ -1849,7 +1851,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         nameBlock.classList.add("text-left")
         nameBlock.setAttribute("style",  "font-weight: 600;")
         nameBlock.id = todo.track
-        nameBlock.innerText = todo.upvotes + " " + todo.name // + " (" + todo.track + ")" // uncomment to add the tracking number
+        nameBlock.innerHTML = "<font color='#ff9900'>" + todo.upvotes + "</font>&nbsp;&nbsp;" + todo.name // + " (" + todo.track + ")" // uncomment to add the tracking number
         nameBlock.dataset.count = count
         nameBlock.dataset.votes = todo.upvotes
         nameBlock.dataset.track = todo.track
