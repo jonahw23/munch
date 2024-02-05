@@ -2119,8 +2119,6 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       timeUp += time
 
-      var noCooldown = true // remove before prod
-
       const confirm = function(conflicts, newtodo){
         var modal = document.querySelector("#confirmModal")
         modal.classList.remove("hidden")
@@ -2223,7 +2221,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       // actually submit
       //console.log(isOutside)
-      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1) && (getUserCoolDown() - 60000 <= time || noCooldown) ) {
+      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1) && (getUserCoolDown() - 60000 <= time) ) {
         var error = document.querySelector("#formError")
         error.classList.add("hidden")
         console.log(event.value)
@@ -2257,7 +2255,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       else{
         var error = document.querySelector("#formError")
         error.classList.remove("hidden")
-        if((getUserCoolDown() - 60000 > time) && !noCooldown){
+        if( (getUserCoolDown() - 60000 > time) ){
           var minsLeft = Math.floor( ( getUserCoolDown() - time ) / 60000)
           error.innerText = "Please wait " + minsLeft +" minutes before submitting again"
         }
