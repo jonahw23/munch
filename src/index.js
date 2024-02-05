@@ -360,7 +360,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         onValue(firebaseTodos, (snapshot) => {
           if(snapshot.val() !== null){
             const newTodos = snapshot.val();
-            window.todos = JSON.parse(newTodos)
+            window.todos = newTodos
             console.log("Window todos :", window.todos)
           }
           else{
@@ -379,16 +379,22 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         set(ref(database, 'todos'), newTodos); // push to todos
       }
 
-      function addFirebaseVote (eventTrack, uid, amt){
+      function addFirebaseVote (eventTrack, uid, amt){ // uid unused currently
         const database = getDatabase(firebaseApp);
-        const votes = ref(database, 'events/' + eventTrack + "/" + uid );
-        onValue(votes, (snapshot) => {
+        const allTodos = ref(database, 'todos');
+        onValue(allTodos, (snapshot) => {
           if(snapshot.val() !== null){
-            const vote = snapshot.val();
-            set(ref(database, 'events/' + eventTrack + "/" + uid ), vote + amt); // push to todos
+            const todo_set = snapshot.val();
+            for(var i = 0; i < todo_set.length; i++){
+              if(todo_set[i].track == eventTrack){
+                todo_set[i].upvotes += amt
+                set(ref(database, 'todos'), todo_set); // push to todos
+                break
+              }
+            }
           }
           else{ // first time voting
-            set(ref(database, 'events/' + eventTrack + "/" + uid ), amt); // push to todos
+            console.log("No todos found")
           }
         }, // end snapshot logic
         {
@@ -1356,19 +1362,17 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
     function addUpVote(i) {
       window.todos[i].upvotes += 1
-      setFirebaseTodos(JSON.stringify(window.todos))
       addFirebaseVote(window.todos[i].track, userId, 1)
       updateTodos()
     }
 
     function addDownVote(i) {
       window.todos[i].upvotes -= 1
-      setFirebaseTodos(JSON.stringify(window.todos))
       addFirebaseVote(window.todos[i].track, userId, -1)
       updateTodos()
     }
 
-    window.todos = ${[todos] || []}
+    window.todos = ${todos || []}
 
     console.log("Events/todos:", window.todos)
 
@@ -1573,7 +1577,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       var todo = newTodoSet.find(t => t.id == todoElement.dataset.todo)
       todo.completed = !todo.completed
       window.todos = newTodoSet
-      setFirebaseTodos(JSON.stringify(window.todos))
+      setFirebaseTodos(window.todos)
       updateTodos()
     }
 
@@ -2016,7 +2020,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           addToUserUpvotes(window.todos[count].user_submitted, window.todos[count].upvotes)
           window.todos.splice(count, 1)
           updateTodos()
-          setFirebaseTodos(JSON.stringify(window.todos))
+          setFirebaseTodos(window.todos)
           return // to make sure it doesn't finish rendering the finished one
         }
 
@@ -2203,7 +2207,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             addToUserUpvotes(window.todos[count].user_submitted, window.todos[count].upvotes)
             window.todos.splice(count, 1)
             updateTodos()
-            setFirebaseTodos(JSON.stringify(window.todos))
+            setFirebaseTodos(window.todos)
             return // to make sure it doesn't finish rendering the finished one
           }
 
@@ -2258,7 +2262,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           userMadePost()
           checkOutside()
           updateTodos()
-          setFirebaseTodos(JSON.stringify(window.todos))
+          setFirebaseTodos(window.todos)
           loadPins()
         })
       }
@@ -2291,7 +2295,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           userMadePost()
           checkOutside()
           updateTodos()
-          setFirebaseTodos(JSON.stringify(window.todos))
+          setFirebaseTodos(window.todos)
           loadPins()
         }
         else{
