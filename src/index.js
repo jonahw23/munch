@@ -1908,17 +1908,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         downImg.appendChild(strokeDown)
 
         downV.appendChild(downImg)
-
         
-        var xout = document.createElement("button")
-        xout.type = "button"
-        xout.value = count
-        xout.onclick = function () {
-          window.todos.splice(xout.value, 1) // remove the element
-          updateTodos()
-        } // unhide below element to be able to remove elements SECURITY THREAT
-        xout.className = "hidden bg-white rounded-md p-2 inline-flex items-center justify-right text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-
         var ximg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         ximg.setAttribute("class", "h-2 w-2")
         ximg.setAttribute("fill",  "none")
