@@ -1908,7 +1908,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         downImg.appendChild(strokeDown)
 
         downV.appendChild(downImg)
-        
+
         var ximg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         ximg.setAttribute("class", "h-2 w-2")
         ximg.setAttribute("fill",  "none")
@@ -1925,10 +1925,6 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         stroke.setAttribute("d", "M6 18L18 6M6 6l12 12")
 
         ximg.appendChild(stroke)
-
-        xout.appendChild(ximg)
-
-        //console.log(xout)
 
 
         var checkbox = document.createElement("input")
@@ -2003,7 +1999,6 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         //el.appendChild(checkbox)
         upper.appendChild(nameBlock)
-        upper.appendChild(xout)
         upper.appendChild(votes)
         el.appendChild(inside)
         todoContainer.appendChild(el)
