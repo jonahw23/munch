@@ -641,6 +641,10 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           }
 
           getUserBadges = function(){
+            if(!(currentUser.userbadges)){
+              currentUser.userbadges = {}
+              set(ref(database, 'users/' + user.uid), currentUser); // sync changes to main
+            }
             return currentUser.userbadges // return dict of badges with true/false (some may be missing)
           }
 
@@ -655,6 +659,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           }
           else{
             userNameInput.value = "User"
+            currentUser.username = userNameInput.value
+            set(ref(database, 'users/' + user.uid), currentUser);
           }
 
           // deal with usernames
@@ -683,7 +689,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         loginButton.classList.add("hidden")
         avatar.classList.remove("hidden")
-        //useremail.innerText = user.email // changed to username above
+        useremail.innerText = user.username
 
         if(user.photoURL){
           avatarImg.src = user.photoURL
@@ -2278,7 +2284,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         const badges = getUserBadges() // get the current user badges {badgename: true, ...}
         const allBadges = getAllBadges() // get all possible badges ["badgename",...]
         for(var i = 0; i < allBadges.length; i++){
-          if( badges[ allBadges[i] ] ){ // if the badge has been achieved, it gets the classname of its ID
+          if( allBadges[i] in badges && badges[ allBadges[i] ] ){ // if the badge has been achieved, it gets the classname of its ID
             const badge = document.querySelector("#" + allBadges[i])
             badge.classList.remove("locked")
             badge.classList.add(allBadges[i])
