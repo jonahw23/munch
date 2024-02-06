@@ -264,7 +264,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       </div>
 
-      <div class="h-full lg:mr-5 bg-white shadow-md rounded px-8 pt-6 py-8 mb-4">
+      <div class="h-full lg:w-1/2 lg:mr-5 bg-white shadow-md rounded px-8 pt-6 py-8 mb-4">
         <h1 class="block text-grey-800 text-md font-bold mb-2">Current Food Events</h1>
         <div class="mt-4" id="todos"></div>
         <div id="map" class="mt-4"></div>
@@ -363,6 +363,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             if(newTodos.length > 1){
               window.todos = newTodos.slice(1)
               populateTodos()
+              loadPins()
             }
             else{
               window.todos = []
@@ -1458,6 +1459,10 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       for(let i = 0; i < todos.length; i++){
 
+        if(!(todos[i])){
+          continue
+        }
+
         const pointCoord = coords[todos[i].location].reverse() // google cords are reversed
         //console.log(pointCoord)
         if(pointCoord[0] !== 0){
@@ -2277,13 +2282,13 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         var randTrack = Math.random() * 100000000000000000
         //console.log(randTrack)
         var conflicts = []
-        for(var i = 0; i < todos.length; i++){
-          if(todos[i].location === locationVal){
-            conflicts.push(todos[i])
+        for(var i = 0; i < window.todos.length; i++){
+          if(window.todos[i] && window.todos[i].location === locationVal){
+            conflicts.push(window.todos[i])
           }
         }
         if(conflicts.length === 0){ // if conflicts is not zero, prompt confirm, then do same as below (changes should be made both places)
-          window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, user_submitted: userId, completed: false })
+          window.todos = [].concat(window.todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, user_submitted: userId, completed: false })
           //console.log("Tostring: ", JSON.stringify(window.todos) )
           event.value = "Event Type"
           location.value = "Location"
