@@ -360,10 +360,17 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         onValue(firebaseTodos, (snapshot) => {
           if(snapshot.val() !== null){
             const newTodos = snapshot.val();
-            window.todos = newTodos
+            if(newTodos.length > 1){
+              window.todos = newTodos.slice(1)
+              populateTodos()
+            }
+            else{
+              window.todos = []
+            }
             console.log("Window todos :", window.todos)
           }
           else{
+            window.todos = []
             console.log("No todos found") // should not ever occur
           }
         }, // end snapshot logic
@@ -376,6 +383,8 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       const setFirebaseTodos = function(newTodos){
         const database = getDatabase(firebaseApp);
+        var newTodos = [{"Name":"Empty"}].concat(newTodos)
+        console.log("Setting", newTodos)
         set(ref(database, 'todos'), newTodos); // push to todos
       }
 
@@ -709,7 +718,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
             userNameInput.value = currentUser.username
           }
           else{
-            userNameInput.value = "User"
+            userNameInput.value = "User1"
             currentUser.username = userNameInput.value
             set(ref(database, 'users/' + user.uid), currentUser);
           }
@@ -724,7 +733,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           });
 
           var useremail = document.querySelector("#email")
-          useremail.innerText = currentUser.username
+          useremail.innerText = currentUser.username ? currentUser.username : "User2";
           
         }, // end snapshot logic
         error => {
@@ -740,7 +749,6 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         loginButton.classList.add("hidden")
         avatar.classList.remove("hidden")
-        useremail.innerText = user.username
 
         if(user.photoURL){
           avatarImg.src = user.photoURL
@@ -1372,7 +1380,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       updateTodos()
     }
 
-    window.todos = ${todos || []}
+    window.todos = []
 
     console.log("Events/todos:", window.todos)
 
@@ -2202,15 +2210,6 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
           var timeLeft = todo.hours - time
 
-          if(timeLeft < 60000){ // remove the todo due to time out 60000
-            //console.log("Cutting")
-            addToUserUpvotes(window.todos[count].user_submitted, window.todos[count].upvotes)
-            window.todos.splice(count, 1)
-            updateTodos()
-            setFirebaseTodos(window.todos)
-            return // to make sure it doesn't finish rendering the finished one
-          }
-
           //console.log("Time left", timeLeft + " " + todo.location)
           var hoursLeft = Math.floor(timeLeft / 3600000)
           timeLeft -= hoursLeft * 3600 * 1000
@@ -2269,7 +2268,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
       // actually submit
       //console.log(isOutside)
-      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1) && (getUserCoolDown() - 60000 <= time * 10) ) {
+      if (locationVal !== "Location" && locationVal !== null && event.value !== "Event Type" && event.value !== null && (!specOptions || specOptions[0] !== -1) && (getUserCoolDown() - 60000 <= time) ) {
         var error = document.querySelector("#formError")
         error.classList.add("hidden")
         console.log(event.value)
@@ -2285,7 +2284,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         }
         if(conflicts.length === 0){ // if conflicts is not zero, prompt confirm, then do same as below (changes should be made both places)
           window.todos = [].concat(todos, { track: randTrack, id: window.todos.length + 1, name: description, location: locationVal, room: roomNum.value, outside: isOutside.checked, foods: foodOptions, specs: specOptions, hours: timeUp, upvotes: 1, user_submitted: userId, completed: false })
-          console.log("Tostring: ", JSON.stringify(window.todos) )
+          //console.log("Tostring: ", JSON.stringify(window.todos) )
           event.value = "Event Type"
           location.value = "Location"
           roomNum.value = ""
