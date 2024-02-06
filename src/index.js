@@ -361,8 +361,11 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           if(snapshot.val() !== null){
             const newTodos = snapshot.val();
             if(newTodos.length > 1){
-              window.todos = newTodos.slice(1)
+              window.todos = newTodos.filter(function(e){return e}).slice(1); 
+              console.log("windowTodos:", window.todos)
+              
               populateTodos()
+              startUpWithCurrent()
               loadPins()
             }
             else{
@@ -396,7 +399,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
           if(snapshot.val() !== null){
             const todo_set = snapshot.val();
             for(var i = 0; i < todo_set.length; i++){
-              if(todo_set[i].track == eventTrack){
+              if(todo_set[i] && todo_set[i].track == eventTrack){
                 todo_set[i].upvotes += amt
                 set(ref(database, 'todos'), todo_set); // push to todos
                 break
@@ -691,7 +694,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
               }
             }
             for(var t = 0; t < todo_set.length; t++){
-              if(todo_set[t].user_submitted === user.uid && todo_set[t].upvotes >= 100){
+              if(todo_set[t] && todo_set[t].user_submitted === user.uid && todo_set[t].upvotes >= 100){
                 currentUser.userbadges["badgetrend100"] = true
               }
             }
@@ -1597,7 +1600,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
     const countVotes = function( user_id ){
       var votes = 0
       for(let i = 0; i < todos.length; i++){
-        if(todos[i].user_submitted && todos[i].user_submitted === user_id){
+        if(todos[i] && todos[i].user_submitted && todos[i].user_submitted === user_id){
           votes += todos[i].upvotes
         }
       }
@@ -1906,6 +1909,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
       var count = 0;
 
       window.todos.forEach(todo => {
+        console.log("Todo:", todo)
         trackToCount[todo.track] = count
 
         // display
@@ -2030,6 +2034,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
 
         if(timeLeft < 60000){ // remove the todo due to time out 60000
           //console.log("Cutting")
+          console.log("Todos:", window.todos)
           addToUserUpvotes(window.todos[count].user_submitted, window.todos[count].upvotes)
           window.todos.splice(count, 1)
           updateTodos()
@@ -2079,8 +2084,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         count ++
       })
     }
-  
-    populateTodos()
+
     fillBuildings()
     fillFoods()
     fillSpecs()
