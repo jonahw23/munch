@@ -2283,7 +2283,7 @@ const html = todos => /*html*/ `<!DOCTYPE html>
         console.log(event.value)
         console.log(locationVal)
         var description = event.value + " at " + locationVal
-        var randTrack = Math.random() * 100000000000000000
+        var randTrack = Math.round(Math.random() * 100000000000000000)
         //console.log(randTrack)
         var conflicts = []
         for(var i = 0; i < window.todos.length; i++){
