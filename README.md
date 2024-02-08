@@ -1,0 +1,1 @@
+Deprecated repo, intended to test functionality of Cloudflare workers for serving up HTML webpages with a functional backend, now moved to https://github.com/jonahw23/munchweb and restructured as a Cloudflare page using Firebase as a backend.
